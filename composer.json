@@ -1,0 +1,20 @@
+{
+    "name": "tkuska/dashboard-bundle",
+    "type": "symfony-bundle",
+    "description": "Dashboard bundle",
+    "keywords": ["dashboard"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomasz Kuśka",
+            "email": "tomasz.kuska@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2"
+    },
+    "autoload": {
+        "psr-4": { "Tkuska\\DashboardBundle\\": "" }
+    },
+    "minimum-stability": "dev"
+}
