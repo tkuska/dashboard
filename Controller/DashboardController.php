@@ -35,7 +35,7 @@ class DashboardController extends Controller
         if (!$widget) {
             $widget = new Widget();
             $widget->importConfig($widgetType);
-            $widget->setUzytkownik($user);
+            $widget->setUserId($user->getId());
         }
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine.orm.entity_manager');

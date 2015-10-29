@@ -1,7 +1,7 @@
 {
     "name": "tkuska/dashboard-bundle",
     "type": "symfony-bundle",
-    "description": "Dashboard bundle",
+    "description": "Dashboard bundle, widgets",
     "keywords": ["dashboard"],
     "license": "MIT",
     "authors": [
@@ -12,6 +12,9 @@
     ],
     "require": {
         "php": ">=5.3.2"
+    },
+    "suggest": {        
+        "twbs/bootstrap": "~3"
     },
     "autoload": {
         "psr-4": { "Tkuska\\DashboardBundle\\": "" }

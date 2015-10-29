@@ -15,5 +15,9 @@
             <argument id="translator" type="service" />
             <tag name="twig.extension" />
         </service>
+        <service id="tkuska_dasboard.calendar.widget" class="Tkuska\DashboardBundle\Widgets\CalendarWidget">
+            <argument id="twig" type="service" />
+            <tag name="tkuska_dashboard.widget" alias="tkuska_calendar_widget" />
+        </service>
     </services>
 </container>
