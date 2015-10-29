@@ -15,6 +15,7 @@ Require the bundle with composer:
 
     $ composer require tkuska/dashoard-bundle "dev-master"
 
+
 Step 2: Enable the bundle
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -31,6 +32,11 @@ Enable the bundle in the kernel::
             // ...
         );
     }
+
+Step 3: Update database schema
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    php app/console doctrine:schema:update
 
 
 Usage
