@@ -73,7 +73,37 @@ class DashboardController extends Controller
     }
     
     /**
-     * Ogólne statystyki akcji.
+     * @Route("/dashboard/update_widget/{alias}/{x}/{y}/{width}/{height}", name="update_widget")
+     */
+    public function updateWidgetAction($alias, $x, $y, $width, $height)
+    {
+        /* @var $security \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage */
+        $security = $this->get('security.token_storage');
+        $user = $security->getToken()->getUser();
+        /* @var $widgetRepository \Tkuska\DashboardBundle\Entity\Repository\WidgetRepository */
+        $widgetRepository = $this->getDoctrine()
+                ->getManager()
+                ->getRepository('TkuskaDashboardBundle:Widget');
+        
+        $widget = $widgetRepository->getUserWidget($user, $alias)
+                ->getQuery()
+                ->getOneOrNullResult();
+        /* @var $widget Widget */
+        if ($widget) {
+            $widget->setX($x)
+                    ->setY($y)
+                    ->setWidth($width)
+                    ->setHeight($height);
+            /* @var $em \Doctrine\ORM\EntityManager */
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist($widget);
+            $em->flush();
+        }
+        
+        return new \Symfony\Component\HttpFoundation\JsonResponse(true);
+    }
+    
+    /**
      *
      * @Route("/", name="homepage")
      * @Method("GET")
