@@ -15,15 +15,18 @@
                 }
             });
             var grid = $('.grid-stack').data('gridstack');
-            
-            $('.close').click(function(){
+
+            $('.close').click(function () {
                 var widget = $(this).closest('.grid-stack-item');
                 var alias = widget.data('widget-type');
                 $.ajax(Routing.generate('remove_widget', {alias: alias}));
                 grid.remove_widget(widget);
             });
             $('.grid-stack').on('change', function (e, items) {
-                console.log(items)
+                $.each(items, function (index, element) {
+                    var alias = element.el.data('widget-type');
+                    $.ajax(Routing.generate('update_widget', {alias: alias, x: element.x, y: element.y, width: element.width, height: element.height}));
+                })
             });
         });
     </script>

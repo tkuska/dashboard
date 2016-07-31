@@ -4,7 +4,7 @@ namespace Tkuska\DashboardBundle\Twig;
 
 use Tkuska\DashboardBundle\Widget\WidgetTypeInterface;
 use Tkuska\DashboardBundle\WidgetProvider;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -22,7 +22,7 @@ class DashboardExtension extends \Twig_Extension
     
     /**
      *
-     * @var Router 
+     * @var RouterInterface 
      */
     protected $router;
     
@@ -37,7 +37,7 @@ class DashboardExtension extends \Twig_Extension
      * @param WidgetProvider $provider
      * @param Router $router
      */
-    public function __construct(WidgetProvider $provider, Router $router, TranslatorInterface $translator)
+    public function __construct(WidgetProvider $provider, RouterInterface $router, TranslatorInterface $translator)
     {
         $this->provider = $provider;
         $this->router = $router;
