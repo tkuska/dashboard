@@ -13,7 +13,7 @@ Require the bundle with composer:
 
 .. code-block:: bash
 
-    $ composer require tkuska/dashoard-bundle "dev-master"
+    $ composer require tkuska/dashboard-bundle "dev-master"
 
 
 Step 2: Enable the bundle
