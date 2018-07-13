@@ -2,43 +2,49 @@
 
 namespace Tkuska\DashboardBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * Widget.
+ * @ORM\Table(name="widgets")
+ * @ORM\Entity(repositoryClass="Tkuska\DashboardBundle\Entity\Repository\WidgetRepository")
  */
+
 class Widget
 {
     /**
-     * @var int
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
     /**
-     * @var int
+     * @ORM\Column(name="x", type="integer", nullable=true)
      */
     protected $x = 0;
 
     /**
-     * @var int
+     * @ORM\Column(name="y", type="integer", nullable=true)
      */
     protected $y = 0;
 
     /**
-     * @var int
+     * @ORM\Column(name="width", type="integer", nullable=true)
      */
     protected $width;
 
     /**
-     * @var int
+     * @ORM\Column(name="height", type="integer", nullable=true)
      */
     protected $height;
     
     /**
-     * @var string
+     * @ORM\Column(name="type", type="string", length=100, nullable=true)
      */
     private $type;
     
     /**
-     * @var int
+     * @ORM\Column(name="user_id", type="integer", nullable=true, unique=true)
      */
     private $user_id;
     

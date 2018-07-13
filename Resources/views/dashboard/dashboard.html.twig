@@ -3,7 +3,17 @@
 
 {% block page_head %}{% trans %}dashboard{% endtrans %} {{ renderWidgetSelector() }} {%endblock %}
 {% block javascripts %}
-    {{ parent() }}
+{# j'ai déplacé le code dans le body il marchait toute façon pas ici #}
+{% endblock %}
+{% block body -%}
+     
+
+{# là j'ai essayé d'importer de manière sauvage les biblis JS mais le navigateur n'arrive pas à les télécharger - les liens marchent pourtant #}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css"/>
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.js'></script>
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.jQueryUI.min.js'></script>
+
+{{ parent() }}
     <script type="text/javascript">
         $(function () {
             $('.grid-stack').gridstack({
@@ -30,8 +40,8 @@
             });
         });
     </script>
-{% endblock %}
-{% block body -%}
+
+    {{ renderWidgetSelector() }}
     <div class="grid-stack" data-gs-animate="yes">
         {% for widget in widgets %}
             {{ renderWidget(widget) }}

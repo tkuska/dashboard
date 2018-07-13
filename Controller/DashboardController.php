@@ -42,7 +42,7 @@ class DashboardController extends Controller
         $em->persist($widget);
         $em->flush();
         
-        return $this->redirectToRoute('homepage');
+        return $this->redirectToRoute('home');
     }
 
     /**
