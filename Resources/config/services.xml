@@ -5,19 +5,19 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="tkuska_dashboard.widget_provider" class="Tkuska\DashboardBundle\WidgetProvider">
+        <service id="tkuska_dashboard.widget_provider" class="Tkuska\DashboardBundle\WidgetProvider" public="true">
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="security.token_storage" />
         </service>
-        <service id="dashboard.twig_extension" class="Tkuska\DashboardBundle\Twig\DashboardExtension" public="false">
+        <service id="dashboard.twig_extension" class="Tkuska\DashboardBundle\Twig\DashboardExtension" public="true">
             <argument id="tkuska_dashboard.widget_provider" type="service" />
             <argument id="router" type="service" />
             <argument id="translator" type="service" />
             <tag name="twig.extension" />
         </service>
-<!--        <service id="tkuska_dasboard.calendar.widget" class="Tkuska\DashboardBundle\Widgets\CalendarWidget">
+        <service id="tkuska_dasboard.calendar.widget" class="Tkuska\DashboardBundle\Widgets\CalendarWidget" public="true">
             <argument id="twig" type="service" />
             <tag name="tkuska_dashboard.widget" alias="tkuska_calendar_widget" />
-        </service>-->
+        </service>
     </services>
 </container>
