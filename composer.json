@@ -1,5 +1,5 @@
 {
-    "name": "tkuska/dashboard-bundle",
+    "name": "2lenet/dashboard-bundle",
     "type": "symfony-bundle",
     "description": "Dashboard bundle, widgets",
     "keywords": ["dashboard"],
