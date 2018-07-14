@@ -44,7 +44,7 @@ class Widget
     private $type;
     
     /**
-     * @ORM\Column(name="user_id", type="integer", nullable=true, unique=true)
+     * @ORM\Column(name="user_id", type="integer", nullable=true)
      */
     private $user_id;
     

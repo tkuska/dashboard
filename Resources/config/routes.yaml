@@ -1,4 +1,4 @@
-add_widget:
-    path: /dashboard/add_widget/{alias}
-    defaults:
-        _controller: Tkuska\DashboardBundle\Controller\DashboardController::addWidgetAction
+dashbord_routes:
+    resource: '@TkuskaDashboardBundle/Controller/DashboardController.php'
+    prefix: /dashboard
+    type: annotation

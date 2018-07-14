@@ -11,7 +11,8 @@
         }
     ],
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.2",
+        "friendsofsymfony/jsrouting-bundle": "^2.2"
     },
     "suggest": {        
         "twbs/bootstrap": "~3"

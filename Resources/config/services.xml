@@ -19,5 +19,9 @@
             <argument id="twig" type="service" />
             <tag name="tkuska_dashboard.widget" alias="tkuska_calendar_widget" />
         </service>
+        <service id="tkuska_dasboard.2le.widget" class="Tkuska\DashboardBundle\Widgets\LleWidget" public="true">
+            <argument id="twig" type="service" />
+            <tag name="tkuska_dashboard.widget" alias="tkuska_2le_widget" />
+        </service>
     </services>
 </container>

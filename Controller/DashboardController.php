@@ -46,7 +46,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * @Route("/dashboard/remove_widget/{alias}", name="remove_widget")
+     * @Route("/dashboard/remove_widget/{alias}", options={"expose"=true}, name="remove_widget")
      */
     public function removeWidgetAction($alias)
     {
@@ -73,7 +73,7 @@ class DashboardController extends Controller
     }
     
     /**
-     * @Route("/dashboard/update_widget/{alias}/{x}/{y}/{width}/{height}", name="update_widget")
+     * @Route("/dashboard/update_widget/{alias}/{x}/{y}/{width}/{height}", options={"expose"=true}, name="update_widget")
      */
     public function updateWidgetAction($alias, $x, $y, $width, $height)
     {
