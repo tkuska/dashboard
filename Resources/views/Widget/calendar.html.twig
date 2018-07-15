@@ -1,29 +1,34 @@
 
 <div class="panel panel-default grid-stack-item-content">
     <div class="panel-heading">
-        <i class="fa fa-calendar-o fa-fw"></i> Calendar
+        <i class="fa fa-calendar-o fa-fw"></i> Clock
         <button type="button" class="close pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     </div>
     <div class="panel-body">
-        <div class="responsive-calendar">
-            <div class="controls">
-                <a class="pull-left" data-go="prev"><div class="btn btn-default"><i class="glyphicon glyphicon-chevron-left"></i></div></a>
-                <h4><span data-head-year></span> <span data-head-month></span></h4>
-                <a class="pull-right" data-go="next"><div class="btn btn-default"><i class="glyphicon glyphicon-chevron-right"></i></div></a>
-            </div><hr/>
-            <div class="day-headers">
-                <div class="day header">Pn</div>
-                <div class="day header">Wt</div>
-                <div class="day header">Śr</div>
-                <div class="day header">Czw</div>
-                <div class="day header">Pt</div>
-                <div class="day header">So</div>
-                <div class="day header">Nd</div>
-            </div>
-            <div class="days" data-group="days">
-                <!-- the place where days will be generated -->
-            </div>
-        </div>
+    <div class="clock"></div>
+    <script>
+        function clock() {// We create a new Date object and assign it to a variable called "time".
+            var time = new Date(),
+    
+    // Access the "getHours" method on the Date object with the dot accessor.
+    hours = time.getHours(),
+    
+    // Access the "getMinutes" method with the dot accessor.
+    minutes = time.getMinutes(),
+    
+    
+    seconds = time.getSeconds();
+
+document.querySelectorAll('.clock')[0].innerHTML = harold(hours) + ":" + harold(minutes) + ":" + harold(seconds);
+  
+  function harold(standIn) {
+    if (standIn < 10) {
+      standIn = '0' + standIn
+    }
+    return standIn;
+  }
+}
+setInterval(clock, 1000);
+</script>
     </div>
-    <div class="panel-footer"></div>
 </div>
