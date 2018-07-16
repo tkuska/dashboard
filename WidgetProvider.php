@@ -76,6 +76,10 @@ class WidgetProvider
      */
     public function getMyWidgets()
     {
+        if ($this->security->getToken()->getUser() == "anon.") {
+            return [];
+        }
+
         $myWidgets = $this->em->getRepository('TkuskaDashboardBundle:Widget')
                 ->getMyWidgets($this->security->getToken()->getUser())
                 ->getQuery()
