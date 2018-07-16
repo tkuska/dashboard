@@ -41,8 +41,9 @@ class DashboardController extends Controller
         $em = $this->get('doctrine.orm.entity_manager');
         $em->persist($widget);
         $em->flush();
-        
-        return $this->redirectToRoute('home');
+        print $alias;
+        die();
+        //return $this->redirectToRoute('home');
     }
 
     /**

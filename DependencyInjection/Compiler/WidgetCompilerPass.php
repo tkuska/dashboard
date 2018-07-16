@@ -27,8 +27,9 @@ class WidgetCompilerPass implements CompilerPassInterface
                 'tkuska_dashboard.widget'
         );
         foreach ($taggedServices as $id => $tags) {
+            $widget = new Reference($id);
             $definition->addMethodCall(
-                    'addWidgetType', array(new Reference($id), $tags[0]['alias'])
+                    'addWidgetType', array($widget, $widget->getType())
             );
         }
     }

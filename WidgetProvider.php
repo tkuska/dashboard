@@ -8,6 +8,9 @@
 
 namespace Tkuska\DashboardBundle;
 
+use phpDocumentor\Reflection\Types\Iterable_;
+
+
 /**
  * Description of WidgetProvider.
  *
@@ -36,11 +39,11 @@ class WidgetProvider
      * @param \Doctrine\ORM\EntityManager $em
      * @param \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security
      */
-    public function __construct(\Doctrine\ORM\EntityManager $em, \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security)
+    public function __construct(\Doctrine\ORM\EntityManager $em, \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security, Iterable_$widget_types)
     {
         $this->em = $em;
         $this->security = $security;
-        $this->widgetTypes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->widgetTypes = $widget_types;
     }
 
     /**
@@ -72,6 +75,11 @@ class WidgetProvider
      */
     public function getWidgetType($alias)
     {
+        print "<ul>";
+        foreach ($this->widgetTypes as $k => $wt) {
+            print "<li>$k:".$wt;
+        }
+        print "seach $alias";
         return $this->widgetTypes->get($alias);
     }
 
@@ -87,8 +95,10 @@ class WidgetProvider
         $return = array();
         foreach ($myWidgets as $widget) {
             $widgetType = $this->getWidgetType($widget->getType());
-            $widgetType->setParams($widget);
-            $return[] = $widgetType;
+            if ($widgetType) {  // the widget could have been deleted
+                $widgetType->setParams($widget);
+                $return[] = $widgetType;
+            }
         }
         return $return;
     }
