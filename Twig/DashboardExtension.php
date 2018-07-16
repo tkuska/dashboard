@@ -55,6 +55,7 @@ class DashboardExtension extends \Twig_Extension
     public function renderWidgetSelector()
     {
         $widgets = $this->provider->getWidgetTypes();
+
         $html = '<div class="btn-group pull-right"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
         $html .= $this->translator->trans('available_widgets', array(), 'TkuskaDashboardBundle');
         $html .= '<span class="caret"></span></button><ul class="dropdown-menu">';

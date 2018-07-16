@@ -8,8 +8,6 @@
 
 namespace Tkuska\DashboardBundle;
 
-use phpDocumentor\Reflection\Types\Iterable_;
-
 
 /**
  * Description of WidgetProvider.
@@ -30,7 +28,6 @@ class WidgetProvider
 
     /**
      *
-     * @var \Doctrine\Common\Collections\ArrayCollection
      */
     protected $widgetTypes;
     
@@ -39,25 +36,19 @@ class WidgetProvider
      * @param \Doctrine\ORM\EntityManager $em
      * @param \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security
      */
-    public function __construct(\Doctrine\ORM\EntityManager $em, \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security, Iterable_$widget_types)
+    public function __construct(\Doctrine\ORM\EntityManager $em, \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security, iterable $widget_types)
     {
         $this->em = $em;
         $this->security = $security;
-        $this->widgetTypes = $widget_types;
+        
+        foreach($widget_types[0] as $id => $w_service) {
+            //print get_class($w_service);
+            //print $id;
+            $this->widgetTypes[ $w_service->getType() ] = $w_service;
+        }
     }
 
-    /**
-     * 
-     * @param Widget\WidgetTypeInterface $widget
-     * @param string $alias
-     * @return \Tkuska\DashboardBundle\WidgetProvider
-     */
-    public function addWidgetType(Widget\WidgetTypeInterface $widget, $alias)
-    {
-        $this->widgetTypes->set($alias, $widget);
 
-        return $this;
-    }
 
     /**
      * 
@@ -70,17 +61,14 @@ class WidgetProvider
 
     /**
      * 
-     * @param string $alias
+     * @param string $widget_type
      * @return Widget\WidgetTypeInterface
      */
-    public function getWidgetType($alias)
+    public function getWidgetType($widget_type)
     {
-        print "<ul>";
-        foreach ($this->widgetTypes as $k => $wt) {
-            print "<li>$k:".$wt;
+        if ( array_key_exists($widget_type, $this->widgetTypes)) {
+            return $this->widgetTypes[$widget_type];
         }
-        print "seach $alias";
-        return $this->widgetTypes->get($alias);
     }
 
     /**

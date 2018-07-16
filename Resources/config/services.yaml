@@ -1,0 +1,27 @@
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: false       # Allows optimizing the container by removing unused services; this also means
+                            # fetching services directly from the container via $container->get() won't work.
+                            # The best practice is to be explicit about your dependencies anyway.
+
+    tkuska_dashboard.widget_provider:
+        class: Tkuska\DashboardBundle\WidgetProvider
+        public: true
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@security.token_storage'
+            - [!tagged tkuska_dashboard.widget]
+    dashboard.twig_extension:
+        class: Tkuska\DashboardBundle\Twig\DashboardExtension
+        public: true
+        arguments:
+            - '@tkuska_dashboard.widget_provider'
+            - '@router'
+            - '@translator'
+        tags:
+          - { 'name': 'twig.extension' }
+    Tkuska\DashboardBundle\Widgets\:
+        resource: '../../Widgets'
+        tags: ['tkuska_dashboard.widget']
