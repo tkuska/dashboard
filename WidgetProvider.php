@@ -7,6 +7,7 @@
  */
 
 namespace Tkuska\DashboardBundle;
+use Doctrine\ORM\EntityManagerInterface;
 
 
 /**
@@ -36,14 +37,12 @@ class WidgetProvider
      * @param \Doctrine\ORM\EntityManager $em
      * @param \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security
      */
-    public function __construct(\Doctrine\ORM\EntityManager $em, \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security, iterable $widget_types)
+    public function __construct( EntityManagerInterface $em, \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security, iterable $widget_types)
     {
         $this->em = $em;
         $this->security = $security;
         
         foreach($widget_types[0] as $id => $w_service) {
-            //print get_class($w_service);
-            //print $id;
             $this->widgetTypes[ $w_service->getType() ] = $w_service;
         }
     }
@@ -84,7 +83,7 @@ class WidgetProvider
                 ->getMyWidgets($this->security->getToken()->getUser())
                 ->getQuery()
                 ->getResult();
-        $return = array();
+        $return = [];
         foreach ($myWidgets as $widget) {
             $widgetType = $this->getWidgetType($widget->getType());
             if ($widgetType) {  // the widget could have been deleted
