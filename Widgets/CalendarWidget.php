@@ -29,5 +29,12 @@ class CalendarWidget extends AbstractWidget
     {
         return $this->twig->render('TkuskaDashboardBundle:Widget:calendar.html.twig');
     }
-
+    
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
+        return "Horloge";
+    }
 }

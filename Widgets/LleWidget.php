@@ -29,4 +29,12 @@ class LleWidget extends AbstractWidget
         return $this->twig->render('TkuskaDashboardBundle:Widget:2le.html.twig');
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
+        return "2le";
+    }
+
 }
