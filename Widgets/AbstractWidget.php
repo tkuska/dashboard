@@ -26,7 +26,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @var int y position
      */
-    protected $y = 0;
+    protected $y = 1000;
 
     /**
      * @var int widget width
@@ -37,6 +37,11 @@ abstract class AbstractWidget implements WidgetTypeInterface
      * @var int widget height
      */
     protected $height = 5;
+
+    /**
+     * @var string json config
+     */
+    private $config;
 
     /**
      * @var Environment
@@ -119,6 +124,14 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setParams(Widget $widget)
     {
         $this->id = $widget->getId();
@@ -126,6 +139,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
         $this->y = $widget->getY();
         $this->width = $widget->getWidth();
         $this->height = $widget->getHeight();
+        $this->config = $widget->getConfig();
 
         return $this;
     }

@@ -4,6 +4,8 @@ namespace Tkuska\DashboardBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Tkuska\DashboardBundle\Widget\WidgetTypeInterface;
+
 /**
  * @ORM\Table(name="widgets")
  * @ORM\Entity(repositoryClass="Tkuska\DashboardBundle\Entity\Repository\WidgetRepository")
@@ -47,140 +49,16 @@ class Widget
      * @ORM\Column(name="user_id", type="integer", nullable=true)
      */
     private $user_id;
-    
-    /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
-     * Set x.
-     *
-     * @param int $x
-     *
-     * @return Widget
+     * @ORM\Column(type="json", nullable=true)
      */
-    public function setX($x)
-    {
-        $this->x = $x;
-
-        return $this;
-    }
+    private $config;
 
     /**
-     * Get x.
-     *
-     * @return int
+     * Import config.
      */
-    public function getX()
-    {
-        return $this->x;
-    }
-
-    /**
-     * Set y.
-     *
-     * @param int $y
-     *
-     * @return Widget
-     */
-    public function setY($y)
-    {
-        $this->y = $y;
-
-        return $this;
-    }
-
-    /**
-     * Get y.
-     *
-     * @return int
-     */
-    public function getY()
-    {
-        return $this->y;
-    }
-
-    /**
-     * Set width.
-     *
-     * @param int $width
-     *
-     * @return Widget
-     */
-    public function setWidth($width)
-    {
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * Get width.
-     *
-     * @return int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * Set height.
-     *
-     * @param int $height
-     *
-     * @return Widget
-     */
-    public function setHeight($height)
-    {
-        $this->height = $height;
-
-        return $this;
-    }
-
-    /**
-     * Get height.
-     *
-     * @return int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-   
-    /**
-     * Set type
-     *
-     * @param string $type
-     * @return Widget
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * Get type
-     *
-     * @return string 
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-    
-    /**
-     * 
-     */
-    public function importConfig(\Tkuska\DashboardBundle\Widget\WidgetTypeInterface $widgetType)
+    public function importConfig(WidgetTypeInterface $widgetType)
     {
         $this->type = $widgetType->getType();
         $this->width = $widgetType->getWidth();
@@ -191,27 +69,92 @@ class Widget
         return $this;
     }
 
-    /**
-     * Set userId
-     *
-     * @param int $userId
-     *
-     * @return Widget
-     */
-    public function setUserId($userId)
+    public function getId(): ?int
     {
-        $this->user_id = $userId;
+        return $this->id;
+    }
+
+    public function getX(): ?int
+    {
+        return $this->x;
+    }
+
+    public function setX(?int $x): self
+    {
+        $this->x = $x;
 
         return $this;
     }
 
-    /**
-     * Get userId
-     *
-     * @return int
-     */
-    public function getUserId()
+    public function getY(): ?int
+    {
+        return $this->y;
+    }
+
+    public function setY(?int $y): self
+    {
+        $this->y = $y;
+
+        return $this;
+    }
+
+    public function getWidth(): ?int
+    {
+        return $this->width;
+    }
+
+    public function setWidth(?int $width): self
+    {
+        $this->width = $width;
+
+        return $this;
+    }
+
+    public function getHeight(): ?int
+    {
+        return $this->height;
+    }
+
+    public function setHeight(?int $height): self
+    {
+        $this->height = $height;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getUserId(): ?int
     {
         return $this->user_id;
+    }
+
+    public function setUserId(?int $user_id): self
+    {
+        $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    public function setConfig($config): self
+    {
+        $this->config = $config;
+
+        return $this;
     }
 }
