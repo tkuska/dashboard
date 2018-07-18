@@ -84,11 +84,13 @@ class WidgetProvider
                 ->getQuery()
                 ->getResult();
         $return = [];
-        foreach ($myWidgets as $widget) {
-            $widgetType = $this->getWidgetType($widget->getType());
-            if ($widgetType) {  // the widget could have been deleted
-                $widgetType->setParams($widget);
-                $return[] = $widgetType;
+        foreach ($myWidgets as $widget_entity) {
+            $obj = $this->getWidgetType($widget_entity->getType());
+
+            if ($obj) {  // the widget could have been deleted
+                $widget = clone($obj);
+                $widget->setParams($widget_entity);
+                $return[] = $widget;
             }
         }
         return $return;
