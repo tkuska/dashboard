@@ -6,22 +6,17 @@ services:
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
 
-    tkuska_dashboard.widget_provider:
+    Tkuska\DashboardBundle\Controller\:
+        resource: '../../Controller'
+
+    Tkuska\DashboardBundle\Widgets\:
+        resource: '../../Widgets'
+        tags: ['tkuska_dashboard.widget']
+
+    Tkuska\DashboardBundle\WidgetProvider:
         class: Tkuska\DashboardBundle\WidgetProvider
         public: true
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@security.token_storage'
             - [!tagged tkuska_dashboard.widget]
-    dashboard.twig_extension:
-        class: Tkuska\DashboardBundle\Twig\DashboardExtension
-        public: true
-        arguments:
-            - '@tkuska_dashboard.widget_provider'
-            - '@router'
-            - '@translator'
-        tags:
-          - { 'name': 'twig.extension' }
-    Tkuska\DashboardBundle\Widgets\:
-        resource: '../../Widgets'
-        tags: ['tkuska_dashboard.widget']

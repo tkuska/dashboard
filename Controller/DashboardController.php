@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Tkuska\DashboardBundle\Entity\Widget;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Tkuska\DashboardBundle\WidgetProvider;
 
 /**
  * Akcja controller.
@@ -15,14 +16,15 @@ class DashboardController extends Controller
 {
     /**
      * @Route("/dashboard/add_widget/{alias}", name="add_widget")
-     */
-    public function addWidgetAction($alias)
+     */ 
+
+    public function addWidgetAction(WidgetProvider $provider, $alias)
     {
         /* @var $security \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage */
         $security = $this->get('security.token_storage');
         $user = $security->getToken()->getUser();
         /* @var $widget \Tkuska\DashboardBundle\Widget\WidgetTypeInterface */
-        $widgetType = $this->get('tkuska_dashboard.widget_provider')->getWidgetType($alias);
+        $widgetType = $provider->getWidgetType($alias);
         /* @var $widgetRepository \Tkuska\DashboardBundle\Entity\Repository\WidgetRepository */
         $widgetRepository = $this->getDoctrine()
                 ->getManager()
@@ -108,9 +110,10 @@ class DashboardController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function dashboardAction()
+    public function dashboardAction(WidgetProvider $provider)
     {
-        $widgets = $this->get('tkuska_dashboard.widget_provider')->getMyWidgets();
-        return array('widgets' => $widgets);
+        $widgets = $provider->getMyWidgets();
+        $widget_types = $provider->getWidgetTypes();
+        return array('widgets' => $widgets, 'widget_types' => $widget_types);
     }
 }

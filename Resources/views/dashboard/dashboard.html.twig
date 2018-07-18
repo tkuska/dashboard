@@ -1,6 +1,5 @@
 {% extends  "base.html.twig" %}
 {% trans_default_domain 'TkuskaDashboardBundle' %}
-{% block page_head %}{% trans %}dashboard{% endtrans %} {{ renderWidgetSelector() }} {%endblock %}
 
 {% block head_stylesheets %}
 {{ parent() }}
@@ -17,14 +16,30 @@
 <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.jQueryUI.min.js'></script>
 {% endblock %}
 
-{% block main -%}
+{% block main %}
     {{ parent() }}
 
-    {{ renderWidgetSelector() }}
+    <div class="btn-group pull-right">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{'available_widgets' | trans }}
+        <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+        {% for typ, widget_type in widget_types %}
+            <li>
+                <a href="{{ path('add_widget',{'alias': widget_type.type }) }}">
+                    {{ widget_type.name }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+
     <h1 class="title"> Dashboard </h1>
     <div class="grid-stack" data-gs-animate="yes">
         {% for widget in widgets %}
-            {{ renderWidget(widget) }}
+            <div class="grid-stack-item" data-gs-x="{{widget.X }}" data-gs-y="{{widget.Y}}" data-gs-width="{{widget.Width}}" data-gs-height="{{widget.Height}}" data-widget-type="{{widget.type}}">
+                {{widget.render |raw}}
+            </div>
         {% endfor %}
     </div>
 {% endblock %}
