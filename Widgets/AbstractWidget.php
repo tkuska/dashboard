@@ -124,8 +124,11 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function getConfig()
+    public function getConfig($key=null)
     {
+        if ($key) {
+            return $this->config[$key] ?? null;
+        }
         return $this->config;
     }
 
