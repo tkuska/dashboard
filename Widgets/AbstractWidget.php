@@ -2,8 +2,10 @@
 
 namespace Tkuska\DashboardBundle\Widgets;
 
-use Tkuska\DashboardBundle\Widget\WidgetTypeInterface;
 use Twig_Environment as Environment;
+
+use Tkuska\DashboardBundle\Entity\Widget;
+use Tkuska\DashboardBundle\Widget\WidgetTypeInterface;
 
 /**
  * Description of CalendarWidget.
@@ -11,6 +13,11 @@ use Twig_Environment as Environment;
  */
 abstract class AbstractWidget implements WidgetTypeInterface
 {
+    /**
+     * @var int
+     */
+    private $id;
+
     /**
      * @var int x position 
      */
@@ -39,6 +46,18 @@ abstract class AbstractWidget implements WidgetTypeInterface
     public function __construct(Environment $twig)
     {
         $this->twig = $twig;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -100,12 +119,15 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function setParams(\Tkuska\DashboardBundle\Entity\Widget $widget)
+    public function setParams(Widget $widget)
     {
+        $this->id = $widget->getId();
         $this->x = $widget->getX();
         $this->y = $widget->getY();
         $this->width = $widget->getWidth();
         $this->height = $widget->getHeight();
+
+        return $this;
     }
 
     public function __toString()

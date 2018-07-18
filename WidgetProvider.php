@@ -1,13 +1,10 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Tkuska\DashboardBundle;
+
 use Doctrine\ORM\EntityManagerInterface;
+
+use Tkuska\DashboardBundle\Entity\Widget;
 
 
 /**
@@ -65,7 +62,7 @@ class WidgetProvider
      */
     public function getWidgetType($widget_type)
     {
-        if ( array_key_exists($widget_type, $this->widgetTypes)) {
+        if (array_key_exists($widget_type, $this->widgetTypes)) {
             return $this->widgetTypes[$widget_type];
         }
     }
@@ -75,20 +72,21 @@ class WidgetProvider
      */
     public function getMyWidgets()
     {
-        if ($this->security->getToken()->getUser() == "anon.") {
+        $user = $this->security->getToken()->getUser();
+        if ($user == "anon.") {
             return [];
         }
 
-        $myWidgets = $this->em->getRepository('TkuskaDashboardBundle:Widget')
-                ->getMyWidgets($this->security->getToken()->getUser())
+        $myWidgets = $this->em->getRepository(Widget::class)
+                ->getMyWidgets($user)
                 ->getQuery()
                 ->getResult();
         $return = [];
         foreach ($myWidgets as $widget) {
             $widgetType = $this->getWidgetType($widget->getType());
             if ($widgetType) {  // the widget could have been deleted
-                $widgetType->setParams($widget);
-                $return[] = $widgetType;
+                $actualWidget = clone $widgetType;
+                $return[] = $actualWidget->setParams($widget);
             }
         }
         return $return;

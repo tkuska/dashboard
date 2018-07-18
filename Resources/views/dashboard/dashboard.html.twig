@@ -24,9 +24,9 @@
         {{'available_widgets' | trans }}
         <span class="caret"></span></button>
         <ul class="dropdown-menu">
-        {% for typ, widget_type in widget_types %}
+        {% for type, widget_type in widget_types %}
             <li>
-                <a href="{{ path('add_widget',{'alias': widget_type.type }) }}">
+                <a href="{{ path('add_widget',{'type': widget_type.type }) }}">
                     {{ widget_type.name }}
                 </a>
             </li>
@@ -37,8 +37,8 @@
     <h1 class="title"> Dashboard </h1>
     <div class="grid-stack" data-gs-animate="yes">
         {% for widget in widgets %}
-            <div class="grid-stack-item" data-gs-x="{{widget.X }}" data-gs-y="{{widget.Y}}" data-gs-width="{{widget.Width}}" data-gs-height="{{widget.Height}}" data-widget-type="{{widget.type}}">
-                {{widget.render |raw}}
+            <div class="grid-stack-item" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
+                {{ widget.render|raw }}
             </div>
         {% endfor %}
     </div>
@@ -61,14 +61,14 @@
 
             $('.close').click(function () {
                 var widget = $(this).closest('.grid-stack-item');
-                var alias = widget.data('widget-type');
-                $.ajax(Routing.generate('remove_widget', {alias: alias}));
+                var id = widget.data('widget-id');
+                $.ajax(Routing.generate('remove_widget', {id: id}));
                 grid.removeWidget(widget);
             });
             $('.grid-stack').on('change', function (e, items) {
                 $.each(items, function (index, element) {
-                    var alias = element.el.data('widget-type');
-                    $.ajax(Routing.generate('update_widget', {alias: alias, x: element.x, y: element.y, width: element.width, height: element.height}));
+                    var id = element.el.data('widget-id');
+                    $.ajax(Routing.generate('update_widget', {id: id, x: element.x, y: element.y, width: element.width, height: element.height}));
                 })
             });
         });

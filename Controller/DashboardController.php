@@ -4,10 +4,12 @@ namespace Tkuska\DashboardBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Tkuska\DashboardBundle\Entity\Widget;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 use Tkuska\DashboardBundle\WidgetProvider;
+use Tkuska\DashboardBundle\Entity\Widget;
 
 /**
  * Akcja controller.
@@ -15,93 +17,64 @@ use Tkuska\DashboardBundle\WidgetProvider;
 class DashboardController extends Controller
 {
     /**
-     * @Route("/dashboard/add_widget/{alias}", name="add_widget")
+     * @Route("/dashboard/add_widget/{type}", name="add_widget")
      */ 
 
-    public function addWidgetAction(WidgetProvider $provider, $alias)
+    public function addWidgetAction(WidgetProvider $provider, $type)
     {
-        /* @var $security \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage */
-        $security = $this->get('security.token_storage');
-        $user = $security->getToken()->getUser();
-        /* @var $widget \Tkuska\DashboardBundle\Widget\WidgetTypeInterface */
-        $widgetType = $provider->getWidgetType($alias);
-        /* @var $widgetRepository \Tkuska\DashboardBundle\Entity\Repository\WidgetRepository */
-        $widgetRepository = $this->getDoctrine()
-                ->getManager()
-                ->getRepository('TkuskaDashboardBundle:Widget');
-        
-        $widget = $widgetRepository->getUserWidget($user, $alias)
-                ->getQuery()
-                ->getOneOrNullResult();
-        
-        if (!$widget) {
-            $widget = new Widget();
-            $widget->importConfig($widgetType);
-            $widget->setUserId($user->getId());
-        }
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine.orm.entity_manager');
+        $widgetType = $provider->getWidgetType($type);
+
+        $widget = new Widget();
+        $widget->importConfig($widgetType);
+        $widget->setUserId($this->getUser()->getId());
+
+        $em = $this->getDoctrine()->getManager();
         $em->persist($widget);
         $em->flush();
+
         return $this->redirectToRoute('home');
     }
 
     /**
-     * @Route("/dashboard/remove_widget/{alias}", options={"expose"=true}, name="remove_widget")
+     * @Route("/dashboard/remove_widget/{id}", options={"expose"=true}, name="remove_widget")
      */
-    public function removeWidgetAction($alias)
+    public function removeWidgetAction($id)
     {
-        /* @var $security \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage */
-        $security = $this->get('security.token_storage');
-        $user = $security->getToken()->getUser();
-        /* @var $widgetRepository \Tkuska\DashboardBundle\Entity\Repository\WidgetRepository */
-        $widgetRepository = $this->getDoctrine()
-                ->getManager()
-                ->getRepository('TkuskaDashboardBundle:Widget');
+        $user = $this->getUser();
         
-        $widget = $widgetRepository->getUserWidget($user, $alias)
-                ->getQuery()
-                ->getOneOrNullResult();
+        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
         
         if ($widget) {
-            /* @var $em \Doctrine\ORM\EntityManager */
-            $em = $this->get('doctrine.orm.entity_manager');
+            $em = $this->getDoctrine()->getManager();
             $em->remove($widget);
             $em->flush();
         }
         
-        return new \Symfony\Component\HttpFoundation\JsonResponse(true);
+        return new JsonResponse(true);
     }
     
     /**
-     * @Route("/dashboard/update_widget/{alias}/{x}/{y}/{width}/{height}", options={"expose"=true}, name="update_widget")
+     * @Route("/dashboard/update_widget/{id}/{x}/{y}/{width}/{height}", options={"expose"=true}, name="update_widget")
      */
-    public function updateWidgetAction($alias, $x, $y, $width, $height)
+    public function updateWidgetAction($id, $x, $y, $width, $height)
     {
-        /* @var $security \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage */
-        $security = $this->get('security.token_storage');
-        $user = $security->getToken()->getUser();
-        /* @var $widgetRepository \Tkuska\DashboardBundle\Entity\Repository\WidgetRepository */
-        $widgetRepository = $this->getDoctrine()
-                ->getManager()
-                ->getRepository('TkuskaDashboardBundle:Widget');
-        
-        $widget = $widgetRepository->getUserWidget($user, $alias)
-                ->getQuery()
-                ->getOneOrNullResult();
-        /* @var $widget Widget */
+        $user = $this->getUser();
+
+        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
+
         if ($widget) {
-            $widget->setX($x)
-                    ->setY($y)
-                    ->setWidth($width)
-                    ->setHeight($height);
-            /* @var $em \Doctrine\ORM\EntityManager */
-            $em = $this->get('doctrine.orm.entity_manager');
-            $em->persist($widget);
+            $widget
+                ->setX($x)
+                ->setY($y)
+                ->setWidth($width)
+                ->setHeight($height)
+            ;
+
+            $em = $this->getDoctrine()->getManager();
             $em->flush();
         }
-        
-        return new \Symfony\Component\HttpFoundation\JsonResponse(true);
+
+        return new JsonResponse(true);
     }
     
     /**
