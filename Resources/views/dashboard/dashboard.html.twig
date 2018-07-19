@@ -1,6 +1,8 @@
 {% extends  "base.html.twig" %}
 {% trans_default_domain 'TkuskaDashboardBundle' %}
 
+{% block page_title %}Dashboard{% endblock %}
+
 {% block head_stylesheets %}
 {{ parent() }}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css"/>
@@ -57,7 +59,7 @@
                 animate: true,
                 alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
                 resizable: {
-                    handles: 'e, se, s'
+                    handles: 'e, se, s, sw, w'
                 }
             });
             var grid = $('.grid-stack').data('gridstack');
