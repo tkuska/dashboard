@@ -37,4 +37,12 @@ class CalendarWidget extends AbstractWidget
     {
         return "Horloge";
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getJsonSchema()
+    {
+        return null;
+    }
 }

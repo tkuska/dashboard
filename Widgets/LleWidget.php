@@ -37,4 +37,11 @@ class LleWidget extends AbstractWidget
         return "2le";
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getJsonSchema()
+    {
+        return null;
+    }
 }
