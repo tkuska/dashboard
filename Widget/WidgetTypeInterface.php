@@ -48,6 +48,11 @@ interface WidgetTypeInterface
      * @return json schema for config
      */
     public function getJsonSchema();
+
+    /**
+     * @return string returns widget title
+     */
+    public function getTitle();
     
     /**
      * @param \Tkuska\DashboardBundle\Entity\Widget $widget

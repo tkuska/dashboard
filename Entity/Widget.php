@@ -56,6 +56,11 @@ class Widget
     private $config;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $title;
+
+    /**
      * Import config.
      */
     public function importConfig(WidgetTypeInterface $widgetType)
@@ -154,6 +159,18 @@ class Widget
     public function setConfig($config): self
     {
         $this->config = $config;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }

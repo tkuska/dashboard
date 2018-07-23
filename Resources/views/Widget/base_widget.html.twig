@@ -1,0 +1,38 @@
+<div class="panel panel-default grid-stack-item-content">
+
+    <div class="panel-heading clearfix">
+        {% block widget_title %}
+            <div>
+                <span class="pull-left" id="widget_title">
+                    {{ widget.title|default(widget.name) }}
+                    &nbsp;
+                </span>
+                <button type="button" class="close pull-left" aria-label="Edit" id="edit" title="Modifier le titre"><span class="fa fa-pencil"></span></button>
+            </div>
+        {% endblock %}
+
+        {% block widget_buttons %}
+
+            <button type="button" class="close pull-right" aria-label="Close" id="close" title="Supprimer le widget"><span class="fa fa-close"></span></button>
+            <span class="pull-right">
+                &nbsp;
+                &nbsp;
+            </span>
+            {% if widget.JsonSchema %}
+                <button type="button" class="close pull-right" aria-label="Configure" id="config" title="Configurer le widget"><span class="fa fa-cog"></span></button>
+            {% endif %}
+
+        {% endblock %}
+    </div>
+
+    
+    {% block widget_body %}
+        <div class="panel-body"></div>
+    {% endblock %}
+
+    {% block widget_footer %}
+        <div class="panel-footer"></div>
+    {% endblock %}
+    
+
+</div>

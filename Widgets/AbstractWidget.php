@@ -44,6 +44,11 @@ abstract class AbstractWidget implements WidgetTypeInterface
     private $config;
 
     /**
+     * @var string widget title
+     */
+    private $title;
+
+    /**
      * @var Environment
      */
     private $twig;
@@ -135,6 +140,14 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setParams(Widget $widget)
     {
         $this->id = $widget->getId();
@@ -143,6 +156,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
         $this->width = $widget->getWidth();
         $this->height = $widget->getHeight();
         $this->config = $widget->getConfig();
+        $this->title = $widget->getTitle();
 
         return $this;
     }

@@ -75,8 +75,52 @@
             // Configure widget button
             $('.close#config').click(function () {
                 var widget = $(this).closest('.grid-stack-item');
-                widget.toggleClass("flip");
+                // flip ici
             });
+
+            // Edit widget custom title
+            $('.close#edit').click(function () {
+                editTitle($(this).siblings('#widget_title'));
+            });
+            $('span[data-widget-title-dblclick="true"]').dblclick(function () {
+                editTitle($(this));
+            })
+
+            function editTitle(title) {
+
+                // SCENE
+                var container = title.closest('div');
+                var newContainer = container.clone(true);
+
+                // FORM CONTROL
+                var input = $('<input></input>')
+                    .attr('type', 'text')
+                    .attr('value', title.text().trim())
+                    .addClass('pull-left form-control')
+                    .css('width', '15%')
+                    .css('min-width', '150px');
+                var form = $('<form></form>').append(input).attr('action', '#');
+
+                var id = $(title).closest('.grid-stack-item').data('widget-id');
+
+                // user presses enter
+                form.submit(function () {
+                    $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
+                    $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
+                    form.replaceWith(newContainer);
+                })
+
+                // user focuses out
+                input.blur(function () {
+                    $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
+                    $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
+                    form.replaceWith(newContainer);
+                })
+
+                // show input and focus
+                container.replaceWith(form);
+                input.focus()[0].setSelectionRange(99999, 99999);;
+            }
 
             // When the widget is moved or resized
             $('.grid-stack').on('change', function (e, items) {

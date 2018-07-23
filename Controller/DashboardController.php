@@ -40,8 +40,6 @@ class DashboardController extends Controller
      */
     public function removeWidgetAction($id)
     {
-        $user = $this->getUser();
-        
         $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
         
         if ($widget) {
@@ -58,8 +56,6 @@ class DashboardController extends Controller
      */
     public function updateWidgetAction($id, $x, $y, $width, $height)
     {
-        $user = $this->getUser();
-
         $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
 
         if ($widget) {
@@ -70,6 +66,22 @@ class DashboardController extends Controller
                 ->setHeight($height)
             ;
 
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+        }
+
+        return new JsonResponse(true);
+    }
+
+    /**
+     * @Route("/dashboard/update_title/{id}/{title}", options={"expose"=true}, name="update_title")
+     */
+    public function updateWidgetTitleAction($id, $title)
+    {
+        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
+
+        if ($widget) {
+            $widget->setTitle($title);
             $em = $this->getDoctrine()->getManager();
             $em->flush();
         }
