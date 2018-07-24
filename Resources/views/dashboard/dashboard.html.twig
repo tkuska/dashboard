@@ -42,7 +42,7 @@
 
     <div class="grid-stack" data-gs-animate="yes">
         {% for widget in widgets %}
-            <div class="grid-stack-item" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
+            <div class="grid-stack-item" id="widget_{{ widget.id }}" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
                 {{ widget.render|raw }}
             </div>
         {% endfor %}
