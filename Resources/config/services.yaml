@@ -13,6 +13,9 @@ services:
         resource: '../../Widgets'
         tags: ['tkuska_dashboard.widget']
 
+    Tkuska\DashboardBundle\Repository\:
+        resource: '../../Repository/*'
+
     Tkuska\DashboardBundle\WidgetProvider:
         class: Tkuska\DashboardBundle\WidgetProvider
         public: true

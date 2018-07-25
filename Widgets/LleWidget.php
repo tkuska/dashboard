@@ -26,7 +26,9 @@ class LleWidget extends AbstractWidget
      */
     public function render()
     {
-        return $this->twig->render('TkuskaDashboardBundle:Widget:2le.html.twig');
+        return $this->twig->render('TkuskaDashboardBundle:Widget:2le.html.twig', array(
+            "widget" => $this,
+        ));
     }
 
     /**

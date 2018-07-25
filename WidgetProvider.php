@@ -3,6 +3,7 @@
 namespace Tkuska\DashboardBundle;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 use Tkuska\DashboardBundle\Entity\Widget;
 
@@ -34,13 +35,13 @@ class WidgetProvider
      * @param \Doctrine\ORM\EntityManager $em
      * @param \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security
      */
-    public function __construct( EntityManagerInterface $em, \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security, iterable $widget_types)
+    public function __construct(EntityManagerInterface $em, TokenStorage $security, iterable $widget_types)
     {
         $this->em = $em;
         $this->security = $security;
         
         foreach($widget_types[0] as $id => $w_service) {
-            $this->widgetTypes[ $w_service->getType() ] = $w_service;
+            $this->widgetTypes[$w_service->getType()] = $w_service;
         }
     }
 
@@ -63,7 +64,7 @@ class WidgetProvider
     public function getWidgetType($widget_type)
     {
         if (array_key_exists($widget_type, $this->widgetTypes)) {
-            return $this->widgetTypes[$widget_type];
+            return clone $this->widgetTypes[$widget_type];
         }
     }
 
@@ -72,22 +73,27 @@ class WidgetProvider
      */
     public function getMyWidgets()
     {
+        // Get user.
         $user = $this->security->getToken()->getUser();
-        if ($user == "anon.") {
+        if ($user === "anon.") {
             return [];
         }
 
+        // Get user's widgets.
         $myWidgets = $this->em->getRepository(Widget::class)
                 ->getMyWidgets($user)
                 ->getQuery()
                 ->getResult();
+        
+        // Initialize actual widgets.
         $return = [];
         foreach ($myWidgets as $widget) {
+
             $widgetType = $this->getWidgetType($widget->getType());
             if ($widgetType) {  // the widget could have been deleted
-                $actualWidget = clone $widgetType;
-                $return[] = $actualWidget->setParams($widget);
+                $return[] = $widgetType->setParams($widget);
             }
+            
         }
         return $return;
     }

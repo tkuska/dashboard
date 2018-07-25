@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 use Tkuska\DashboardBundle\WidgetProvider;
 use Tkuska\DashboardBundle\Entity\Widget;
@@ -17,9 +18,8 @@ use Tkuska\DashboardBundle\Entity\Widget;
 class DashboardController extends Controller
 {
     /**
-     * @Route("/dashboard/add_widget/{type}", name="add_widget")
+     * @Route("/dashboard/add_widget/{type}", options={"expose"=true}, name="add_widget")
      */ 
-
     public function addWidgetAction(WidgetProvider $provider, $type)
     {
         $widgetType = $provider->getWidgetType($type);
@@ -32,7 +32,7 @@ class DashboardController extends Controller
         $em->persist($widget);
         $em->flush();
 
-        return $this->redirectToRoute('home');
+        return $this->renderWidget($provider, $widget->getId());
     }
 
     /**
@@ -87,6 +87,28 @@ class DashboardController extends Controller
         }
 
         return new JsonResponse(true);
+    }
+
+    /**
+     * @Route("/dashboard/render_widget/{id}", options={"expose"=true}, name="render_widget")
+     */
+    public function renderWidget(WidgetProvider $provider, $id)
+    {
+        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
+
+        $response = new Response();
+        $response->setContent("");
+        
+        if ($widget) {
+            $widgetType = $provider->getWidgetType($widget->getType());
+
+            if ($widgetType) {
+                $widgetType->setParams($widget);
+                $response->setContent($widgetType->render());
+            }
+
+        }
+        return $response;
     }
     
     /**

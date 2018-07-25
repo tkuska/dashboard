@@ -27,7 +27,9 @@ class CalendarWidget extends AbstractWidget
      */
     public function render()
     {
-        return $this->twig->render('TkuskaDashboardBundle:Widget:calendar.html.twig');
+        return $this->twig->render('TkuskaDashboardBundle:Widget:calendar.html.twig', array(
+            "widget" => $this,
+        ));
     }
     
     /**

@@ -8,7 +8,7 @@ use Tkuska\DashboardBundle\Widget\WidgetTypeInterface;
 
 /**
  * @ORM\Table(name="widgets")
- * @ORM\Entity(repositoryClass="Tkuska\DashboardBundle\Entity\Repository\WidgetRepository")
+ * @ORM\Entity(repositoryClass="Tkuska\DashboardBundle\Repository\WidgetRepository")
  */
 
 class Widget

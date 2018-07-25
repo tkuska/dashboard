@@ -1,34 +1,33 @@
+{% extends "widget/base_widget.html.twig" %}
 
-<div class="panel panel-default grid-stack-item-content">
-    <div class="panel-heading">
-        <i class="fa fa-calendar-o fa-fw"></i> Clock
-        <button type="button" class="close pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    </div>
+{% block widget_body %}
     <div class="panel-body">
-    <div class="clock"></div>
-    <script>
-        function clock() {// We create a new Date object and assign it to a variable called "time".
-            var time = new Date(),
-    
-    // Access the "getHours" method on the Date object with the dot accessor.
-    hours = time.getHours(),
-    
-    // Access the "getMinutes" method with the dot accessor.
-    minutes = time.getMinutes(),
-    
-    
-    seconds = time.getSeconds();
+        <div class="clock"></div>
+        <script>
+            function clock() {// We create a new Date object and assign it to a variable called "time".
+                var time = new Date(),
+        
+                // Access the "getHours" method on the Date object with the dot accessor.
+                hours = time.getHours(),
+                
+                // Access the "getMinutes" method with the dot accessor.
+                minutes = time.getMinutes(),
+                
+                
+                seconds = time.getSeconds();
 
-document.querySelectorAll('.clock')[0].innerHTML = harold(hours) + ":" + harold(minutes) + ":" + harold(seconds);
-  
-  function harold(standIn) {
-    if (standIn < 10) {
-      standIn = '0' + standIn
-    }
-    return standIn;
-  }
-}
-setInterval(clock, 1000);
-</script>
+                document.querySelectorAll('.clock')[0].innerHTML = harold(hours) + ":" + harold(minutes) + ":" + harold(seconds);
+                
+                function harold(standIn) {
+                    if (standIn < 10) {
+                        standIn = '0' + standIn
+                    }
+                    return standIn;
+                }
+            }
+            setInterval(clock, 1000);
+        </script>
     </div>
-</div>
+{% endblock %}
+
+{% block widget_footer %}{% endblock %}

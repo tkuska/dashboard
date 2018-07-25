@@ -16,6 +16,99 @@
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
     <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.js'></script>
     <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.jQueryUI.min.js'></script>
+
+    <script>
+
+        function toggleSpin()
+        {
+            $("#gs-spin").toggleClass("fa-spinner");
+        }
+
+        // Add a widget to the grid.
+        function addWidget(type) {
+            toggleSpin();
+            $.ajax({
+                url: Routing.generate('add_widget', {type: type}),
+                success: function (response) {
+
+                    // Update the grid
+                    var grid = $('.grid-stack').data('gridstack');
+                    grid.addWidget(response);
+                    grid.batchUpdate();
+                    grid.commit();
+
+                    addWidgetListeners($(response).data('widget-id'));
+                    toggleSpin();
+                }
+            });
+        }
+
+        // Add the event listeners for the buttons of the widget.
+        function addWidgetListeners(id) {
+
+            var grid = $('.grid-stack').data('gridstack');
+
+            // Close widget button
+            $('#widget_' + id + ' #close').click(function () {
+                var widget = $(this).closest('.grid-stack-item');
+                var id = widget.data('widget-id');
+                $.ajax(Routing.generate('remove_widget', {id: id}));
+                grid.removeWidget(widget);
+            });
+
+            // Configure widget button
+            $('#widget_' + id + ' #config').click(function () {
+                var widget = $(this).closest('.grid-stack-item');
+                // flip ici
+            });
+
+            // Edit widget custom title
+            $('#widget_' + id + ' #edit').click(function () {
+                editTitle($(this).siblings('#widget_title'));
+            });
+            $('span[data-widget-title-dblclick="true"]').dblclick(function () {
+                editTitle($(this));
+            })
+        }
+
+        // Edit the title of a widget.
+        function editTitle(title) {
+
+            // SCENE
+            var container = title.closest('div');
+            var newContainer = container.clone(true);
+
+            // FORM CONTROL
+            var input = $('<input></input>')
+                .attr('type', 'text')
+                .attr('value', title.text().trim())
+                .addClass('pull-left form-control')
+                .css('width', '15%')
+                .css('min-width', '150px');
+            var form = $('<form></form>').append(input).attr('action', '#');
+
+            var id = $(title).closest('.grid-stack-item').data('widget-id');
+
+            // user presses enter
+            form.submit(function () {
+                $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
+                $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
+                form.replaceWith(newContainer);
+            })
+
+            // user focuses out
+            input.blur(function () {
+                $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
+                $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
+                form.replaceWith(newContainer);
+            })
+
+            // show input and focus
+            container.replaceWith(form);
+            input.focus()[0].setSelectionRange(99999, 99999);;
+        }
+
+    </script>
 {% endblock %}
 
 {% block main %}
@@ -30,22 +123,44 @@
                 <ul class="dropdown-menu">
                 {% for type, widget_type in widget_types %}
                     <li>
-                        <a href="{{ path('add_widget',{'type': widget_type.type }) }}">
+                        <a href="#" onclick="addWidget('{{ widget_type.type }}')">
                             {{ widget_type.name }}
                         </a>
                     </li>
                 {% endfor %}
                 </ul>
             </div>
+
+            <div class="pull-right">
+                <i id="gs-spin" class="fa fa-pulse"></i>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+            </div>
         </h2>
     </div>
 
-    <div class="grid-stack" data-gs-animate="yes">
-        {% for widget in widgets %}
-            <div class="grid-stack-item" id="widget_{{ widget.id }}" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
-                {{ widget.render|raw }}
-            </div>
-        {% endfor %}
+    <div id="grid-stack" class="grid-stack" data-gs-animate="yes">
+        <script>
+            {% for widget in widgets %}
+                {# Dynamically load widgets. #}
+                $(function(){
+                    $.ajax({
+                        url: Routing.generate('render_widget', {id: {{ widget.id }}}),
+                        success: function (response) {
+
+                            // Update the grid
+                            var grid = $('.grid-stack').data('gridstack');
+                            grid.addWidget(response);
+                            grid.batchUpdate();
+                            grid.commit();
+
+                            addWidgetListeners({{ widget.id }});
+                        }
+                    }); 
+                })
+            {% endfor %}
+        </script>
     </div>
 {% endblock %}
 
@@ -60,67 +175,8 @@
                 alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
                 resizable: {
                     handles: 'e, se, s, sw, w'
-                }
+                },
             });
-            var grid = $('.grid-stack').data('gridstack');
-
-            // Delete widget button
-            $('.close#close').click(function () {
-                var widget = $(this).closest('.grid-stack-item');
-                var id = widget.data('widget-id');
-                $.ajax(Routing.generate('remove_widget', {id: id}));
-                grid.removeWidget(widget);
-            });
-
-            // Configure widget button
-            $('.close#config').click(function () {
-                var widget = $(this).closest('.grid-stack-item');
-                // flip ici
-            });
-
-            // Edit widget custom title
-            $('.close#edit').click(function () {
-                editTitle($(this).siblings('#widget_title'));
-            });
-            $('span[data-widget-title-dblclick="true"]').dblclick(function () {
-                editTitle($(this));
-            })
-
-            function editTitle(title) {
-
-                // SCENE
-                var container = title.closest('div');
-                var newContainer = container.clone(true);
-
-                // FORM CONTROL
-                var input = $('<input></input>')
-                    .attr('type', 'text')
-                    .attr('value', title.text().trim())
-                    .addClass('pull-left form-control')
-                    .css('width', '15%')
-                    .css('min-width', '150px');
-                var form = $('<form></form>').append(input).attr('action', '#');
-
-                var id = $(title).closest('.grid-stack-item').data('widget-id');
-
-                // user presses enter
-                form.submit(function () {
-                    $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
-                    $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
-                    form.replaceWith(newContainer);
-                })
-
-                // user focuses out
-                input.blur(function () {
-                    $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
-                    $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
-                    form.replaceWith(newContainer);
-                })
-
-                // show input and focus
-                container.replaceWith(form);
-                input.focus()[0].setSelectionRange(99999, 99999);;
-            }
 
             // When the widget is moved or resized
             $('.grid-stack').on('change', function (e, items) {
