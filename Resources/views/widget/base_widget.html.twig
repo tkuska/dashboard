@@ -1,5 +1,3 @@
-{# EXEMPLE #}
-
 <div class="grid-stack-item" id="widget_{{ widget.id }}" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
     <div class="panel panel-default grid-stack-item-content">
 
@@ -8,7 +6,7 @@
                 <span class="pull-left" id="widget_title" data-widget-title-dblclick="true">
                     {% block widget_title %}
                         {{ widget.title|default(widget.name) }}
-                    {% endblock %}
+                    {% endblock widget_title %}
                     &nbsp;
                 </span>
                 <button type="button" class="close pull-left" aria-label="Edit" id="edit" title="Modifier le titre"><span class="fa fa-pencil"></span></button>
@@ -26,17 +24,27 @@
                     <button type="button" class="close pull-right" aria-label="Configure" id="config" title="Configurer le widget"><span class="fa fa-cog"></span></button>
                 {% endif %}
 
-            {% endblock %}
+            {% endblock widget_buttons %}
         </div>
 
-        
         {% block widget_body %}
             <div class="panel-body"></div>
-        {% endblock %}
+        {% endblock widget_body %}
+
+        {% block widget_config %}
+            {# TODO config form #}
+            {% if form is defined %}
+                <div id="form_{{ widget.id }}" style="display: none;" class="panel-body">
+                    {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    {{ form_end(form) }}
+                </div>
+            {% endif %}
+        {% endblock widget_config %}
 
         {% block widget_footer %}
             <div class="panel-footer"></div>
-        {% endblock %}
+        {% endblock widget_footer %}
         
     </div>
 </div>
