@@ -35,7 +35,7 @@
             {# TODO config form #}
             {% if form is defined %}
                 <div id="form_{{ widget.id }}" style="display: none;" class="panel-body">
-                    {{ form_start(form) }}
+                    {{ form_start(form, {'action': path('widget_save_config'), 'method': 'POST'}) }}
                     {{ form_widget(form) }}
                     {{ form_end(form) }}
                 </div>

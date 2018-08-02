@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 use Tkuska\DashboardBundle\WidgetProvider;
 use Tkuska\DashboardBundle\Entity\Widget;
@@ -109,6 +110,25 @@ class DashboardController extends Controller
 
         }
         return $response;
+    }
+
+    /**
+     * @Route("/dashboard/widget_save_config", name="widget_save_config")
+     */
+    public function saveConfig(Request $request, WidgetProvider $provider)
+    {
+        $id = $request->request->get("form")["id"];
+        $config = json_encode($request->request->get("form")["Configuration"]); // TODO replace "Configuration" by generic name for translation
+        
+        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
+        
+        if ($widget) {
+            $widget->setConfig($config);
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+        }
+
+        return $this->redirectToRoute("homepage");
     }
     
     /**

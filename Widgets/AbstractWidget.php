@@ -131,10 +131,12 @@ abstract class AbstractWidget implements WidgetTypeInterface
      */
     public function getConfig($key=null)
     {
+        $config = json_decode($this->config, true);
+        
         if ($key) {
-            return $this->config[$key] ?? null;
+            return $config[$key] ?? null;
         }
-        return $this->config;
+        return $config;
     }
 
     /**
