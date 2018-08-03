@@ -9,19 +9,19 @@
                     {% endblock widget_title %}
                     &nbsp;
                 </span>
-                <button type="button" class="close pull-left" aria-label="Edit" id="edit" title="Modifier le titre"><span class="fa fa-pencil"></span></button>
+                <button type="button" class="close pull-left" aria-label="Edit" id="edit_{{ widget.id }}" title="Modifier le titre"><span class="fa fa-pencil"></span></button>
             </div>
             
 
             {% block widget_buttons %}
 
-                <button type="button" class="close pull-right" aria-label="Close" id="close" title="Supprimer le widget"><span class="fa fa-close"></span></button>
+                <button type="button" class="close pull-right" aria-label="Close" id="close_{{ widget.id }}" title="Supprimer le widget"><span class="fa fa-close"></span></button>
                 <span class="pull-right">
                     &nbsp;
                     &nbsp;
                 </span>
                 {% if widget.JsonSchema %}
-                    <button type="button" class="close pull-right" aria-label="Configure" id="config" title="Configurer le widget"><span class="fa fa-cog"></span></button>
+                    <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="Configurer le widget"><span class="fa fa-cog"></span></button>
                 {% endif %}
 
             {% endblock widget_buttons %}
@@ -32,11 +32,12 @@
         {% endblock widget_body %}
 
         {% block widget_config %}
-            {# TODO config form #}
-            {% if form is defined %}
+            {% if form is defined and form %}
+                {% set id = 'form_' ~ widget.id %}
                 <div id="form_{{ widget.id }}" style="display: none;" class="panel-body">
                     {{ form_start(form, {'action': path('widget_save_config'), 'method': 'POST'}) }}
-                    {{ form_widget(form) }}
+                    {{ form_widget(form.Configuration, { 'id': id }) }}
+                    {{ form_rest(form) }}
                     {{ form_end(form) }}
                 </div>
             {% endif %}

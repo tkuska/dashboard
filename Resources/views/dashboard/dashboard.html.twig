@@ -44,7 +44,7 @@
             var grid = $('.grid-stack').data('gridstack');
 
             // Close widget button
-            $('#widget_' + id + ' #close').click(function () {
+            $('#close_' + id).click(function () {
                 var widget = $(this).closest('.grid-stack-item');
                 var id = widget.data('widget-id');
                 $.ajax(Routing.generate('remove_widget', {id: id}));
@@ -52,17 +52,14 @@
             });
 
             // Configure widget button
-            $('#widget_' + id + ' #config').click(function () {
+            $('#config_' + id).click(function () {
 
                 // toggle visibility
                 toggleConfigPanel($(this), id);
-
-                // eventually save configuration
-                saveConfig(id);
             });
 
             // Edit widget custom title
-            $('#widget_' + id + ' #edit').click(function () {
+            $(' #edit_' + id).click(function () {
                 editTitle($(this).siblings('#widget_title'));
             });
             $('span[data-widget-title-dblclick="true"]').dblclick(function () {
@@ -114,12 +111,6 @@
         function toggleConfigPanel(cogButton, id) {
                 cogButton.closest('.grid-stack-item').find(".panel-body:first").toggle();
                 $("#form_" + id).toggle();
-        }
-
-        function saveConfig(id) {
-            if($("#form_" + id).css("display") === "none") { // means that the config has been hidden and perhaps there are changes
-                // todo: save config
-            }
         }
 
     </script>

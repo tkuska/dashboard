@@ -3,6 +3,10 @@
 namespace Tkuska\DashboardBundle\Widgets;
 
 use Twig_Environment as Environment;
+use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Lle\EasyAdminPlusBundle\Form\Type\JsonType;
 
 use Tkuska\DashboardBundle\Entity\Widget;
 use Tkuska\DashboardBundle\Widget\WidgetTypeInterface;
@@ -147,6 +151,11 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return $this->title;
     }
 
+    public function getJsonSchema()
+    {
+        return null;
+    }
+
     /**
      * @inheritdoc
      */
@@ -166,5 +175,19 @@ abstract class AbstractWidget implements WidgetTypeInterface
     public function __toString()
     {
         return $this->getName().'('.$this->getType().')';
+    }
+
+    public function getConfigForm()
+    {
+        if ($this->getJsonSchema() != null) {
+            $formFactory = Forms::createFormFactory();
+            $form = $formFactory->create()
+                ->add('Configuration', JsonType::class, array('schema' => $this->getJsonSchema(), 'theme' => 'bootstrap3'))
+                ->add('submit', SubmitType::class, array('label' => 'Enregistrer'))
+                ->add('id', HiddenType::class, array('data' => $this->getId()));
+            
+            return $form->createView();
+        }
+        return null;
     }
 }
