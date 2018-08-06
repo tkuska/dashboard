@@ -113,6 +113,18 @@
                 $("#form_" + id).toggle();
         }
 
+        function enableGridChanges() {
+            // When a widget is moved or resized
+            $('.grid-stack').on('change', function (e, items) {
+                $.each(items, function (index, element) {
+                    var id = element.el.data('widget-id');
+                    $.ajax(Routing.generate('update_widget', {id: id, x: element.x, y: element.y, width: element.width, height: element.height}));
+                })
+            });
+            grid = $('.grid-stack').data('gridstack');
+            grid.enable();
+        }
+
     </script>
 {% endblock %}
 
@@ -147,6 +159,7 @@
 
     <div id="grid-stack" class="grid-stack" data-gs-animate="yes">
         <script>
+            var widgetsRendered = 0;
             {% for widget in widgets %}
                 {# Dynamically load widgets. #}
                 $(function(){
@@ -161,6 +174,12 @@
                             grid.commit();
 
                             addWidgetListeners({{ widget.id }});
+
+                            // When all widgets are rendered, enable ability for grid to change
+                            widgetsRendered++;
+                            if (widgetsRendered == {{ widgets|length }}) {
+                                enableGridChanges();
+                            }
                         }
                     }); 
                 })
@@ -183,14 +202,8 @@
                     handles: 's, se, sw, n, ne, nw'
                 },
             });
-
-            // When the widget is moved or resized
-            $('.grid-stack').on('change', function (e, items) {
-                $.each(items, function (index, element) {
-                    var id = element.el.data('widget-id');
-                    $.ajax(Routing.generate('update_widget', {id: id, x: element.x, y: element.y, width: element.width, height: element.height}));
-                })
-            });
+            grid = $('.grid-stack').data('gridstack');
+            grid.disable();
         });
     </script>
 {% endblock %}

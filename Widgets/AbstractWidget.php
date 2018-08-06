@@ -183,8 +183,8 @@ abstract class AbstractWidget implements WidgetTypeInterface
             $formFactory = Forms::createFormFactory();
             $form = $formFactory->create()
                 ->add('Configuration', JsonType::class, array('schema' => $this->getJsonSchema(), 'theme' => 'bootstrap3'))
-                ->add('submit', SubmitType::class, array('label' => 'Enregistrer'))
-                ->add('id', HiddenType::class, array('data' => $this->getId()));
+                ->add('id', HiddenType::class, array('data' => $this->getId()))
+                ->add('submit', SubmitType::class, array('label' => 'Enregistrer'));
             
             return $form->createView();
         }
