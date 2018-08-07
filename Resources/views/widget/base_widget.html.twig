@@ -48,7 +48,6 @@
 
                     // Save config in a field with the correct data [ Symfony is screwing up some field values ]
                     window.editor{{ id }}.on("change",  function() {
-                        console.log((JSON.stringify(window.editor{{ id }}.getValue())));
                         $("#form_json_{{ id }}").val(JSON.stringify(window.editor{{ id }}.getValue()));
                     });
 
