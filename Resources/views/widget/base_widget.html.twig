@@ -9,19 +9,22 @@
                     {% endblock widget_title %}
                     &nbsp;
                 </span>
-                <button type="button" class="close pull-left" aria-label="Edit" id="edit_{{ widget.id }}" title="Modifier le titre"><span class="fa fa-pencil"></span></button>
+                    <button type="button" class="close pull-left" aria-label="Edit" id="edit_{{ widget.id }}" title="Modifier le titre"><span class="fa fa-pencil"></span></button>
             </div>
             
 
             {% block widget_buttons %}
-
-                <button type="button" class="close pull-right" aria-label="Close" id="close_{{ widget.id }}" title="Supprimer le widget"><span class="fa fa-close"></span></button>
+                {% block widget_close_button %}
+                    <button type="button" class="close pull-right" aria-label="Close" id="close_{{ widget.id }}" title="Supprimer le widget"><span class="fa fa-close"></span></button>
+                {% endblock %}
                 <span class="pull-right">
                     &nbsp;
                     &nbsp;
                 </span>
                 {% if widget.JsonSchema %}
-                    <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="Configurer le widget"><span class="fa fa-cog"></span></button>
+                    {% block widget_config_button %}
+                        <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'Configuration du widget "' ~ widget.name ~ '"' }}"><span class="fa fa-cog"></span></button>
+                    {% endblock %}
                 {% endif %}
 
             {% endblock widget_buttons %}
@@ -35,16 +38,26 @@
             {% if form is defined and form %}
                 {% set id = 'form_' ~ widget.id %}
                 <div id="form_{{ widget.id }}" style="display: none;" class="panel-body">
-                    {{ form_start(form, {'action': path('widget_save_config'), 'method': 'POST'}) }}
+                    {{ form_start(form, {'action': path('widget_save_config', parameters = {id: widget.id}), 'method': 'POST'}) }}
                     {{ form_widget(form.Configuration, { 'id': id }) }}
                     {{ form_rest(form) }}
                     {{ form_end(form) }}
                 </div>
+
+                <script>
+
+                    // Save config in a field with the correct data [ Symfony is screwing up some field values ]
+                    window.editor{{ id }}.on("change",  function() {
+                        console.log((JSON.stringify(window.editor{{ id }}.getValue())));
+                        $("#form_json_{{ id }}").val(JSON.stringify(window.editor{{ id }}.getValue()));
+                    });
+
+                </script>
             {% endif %}
         {% endblock widget_config %}
 
         {% block widget_footer %}
-            <div class="panel-footer"></div>
+            {# <div class="panel-footer"></div> #}
         {% endblock widget_footer %}
         
     </div>

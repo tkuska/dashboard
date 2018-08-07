@@ -131,14 +131,17 @@ abstract class AbstractWidget implements WidgetTypeInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns the configuration, can be a specific key or the entire configuration
+     * @param $key the name of the configuration field
+     * @param $defaultValue default value when the key doesn't exist
+     * @return string a string representing the entire config or the value of the key
      */
-    public function getConfig($key=null)
+    public function getConfig($key=null, $defaultValue=null)
     {
         $config = json_decode($this->config, true);
         
         if ($key) {
-            return $config[$key] ?? null;
+            return $config[$key] ?? $defaultValue;
         }
         return $config;
     }
@@ -183,8 +186,8 @@ abstract class AbstractWidget implements WidgetTypeInterface
             $formFactory = Forms::createFormFactory();
             $form = $formFactory->create()
                 ->add('Configuration', JsonType::class, array('schema' => $this->getJsonSchema(), 'theme' => 'bootstrap3'))
-                ->add('id', HiddenType::class, array('data' => $this->getId()))
-                ->add('submit', SubmitType::class, array('label' => 'Enregistrer'));
+                ->add('json_form_'.$this->getId(), HiddenType::class)
+                ->add('submit_'.$this->getId(), SubmitType::class, array('label' => 'Enregistrer'));
             
             return $form->createView();
         }

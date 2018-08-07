@@ -201,9 +201,10 @@
                 animate: true,
                 alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
                 resizable: {
-                    // Don't put east and west so the user can still interact with scroll bars
-                    handles: 's, se, sw, n, ne, nw'
+                    // Don't put handles on the sizes so the user can still interact with scroll bars
+                    handles: 'se, sw, ne, nw'
                 },
+                float: true
             });
             grid = $('.grid-stack').data('gridstack');
             grid.disable();

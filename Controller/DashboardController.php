@@ -113,13 +113,11 @@ class DashboardController extends Controller
     }
 
     /**
-     * @Route("/dashboard/widget_save_config", name="widget_save_config")
+     * @Route("/dashboard/widget_save_config/{id}", name="widget_save_config")
      */
-    public function saveConfig(Request $request, WidgetProvider $provider)
+    public function saveConfig(Request $request, WidgetProvider $provider, $id)
     {
-        $id = $request->request->get("form")["id"];
-        $config = json_encode($request->request->get("form")["Configuration"]); // TODO replace "Configuration" by generic name for translation
-        
+        $config = $request->request->get("form")["json_form_".$id];
         $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
         
         if ($widget) {
