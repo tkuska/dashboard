@@ -3,9 +3,7 @@
 namespace Tkuska\DashboardBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -130,15 +128,16 @@ class DashboardController extends Controller
     }
     
     /**
-     *
-     * @Route("/", name="homepage")
-     * @Method("GET")
-     * @Template()
+     * @Route("/", name="homepage", methods="GET")
      */
     public function dashboardAction(WidgetProvider $provider)
     {
         $widgets = $provider->getMyWidgets();
         $widget_types = $provider->getWidgetTypes();
-        return array('widgets' => $widgets, 'widget_types' => $widget_types);
+
+        return $this->render("@TkuskaDashboard/dashboard/dashboard.html.twig", array(
+            "widgets" => $widgets,
+            "widget_types" => $widget_types,
+        ));
     }
 }
