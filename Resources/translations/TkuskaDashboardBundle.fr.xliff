@@ -9,7 +9,23 @@
             <trans-unit id="available_widgets">
                 <source>available_widgets</source>
                 <target>Ajouter un widget</target>
-            </trans-unit>           
+            </trans-unit>
+            <trans-unit id="widget.editTitle">
+                <source>widget.editTitle</source>
+                <target>Modifier le titre</target>
+            </trans-unit>
+            <trans-unit id="widget.deleteWidget">
+                <source>widget.deleteWidget</source>
+                <target>Supprimer le widget</target>
+            </trans-unit>
+            <trans-unit id="widget.configWidget">
+                <source>widget.configWidget</source>
+                <target>Configuration du widget</target>
+            </trans-unit>
+            <trans-unit id="widget.saveConfig">
+                <source>widget.saveConfig</source>
+                <target>Enregistrer</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -6,6 +6,7 @@ use Twig_Environment as Environment;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+
 use Lle\EasyAdminPlusBundle\Form\Type\JsonType;
 
 use Tkuska\DashboardBundle\Entity\Widget;
@@ -51,16 +52,6 @@ abstract class AbstractWidget implements WidgetTypeInterface
      * @var string widget title
      */
     private $title;
-
-    /**
-     * @var Environment
-     */
-    private $twig;
-
-    public function __construct(Environment $twig)
-    {
-        $this->twig = $twig;
-    }
 
     public function getId()
     {
@@ -111,7 +102,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
      */
     public function render()
     {
-        return 'you should implement the render method in '. get_class($this);
+        return 'You should implement the render method in '. get_class($this);
     }
 
     /**
@@ -182,12 +173,12 @@ abstract class AbstractWidget implements WidgetTypeInterface
 
     public function getConfigForm()
     {
-        if ($this->getJsonSchema() != null) {
+        if ($this->getJsonSchema()) {
             $formFactory = Forms::createFormFactory();
             $form = $formFactory->create()
                 ->add('Configuration', JsonType::class, array('schema' => $this->getJsonSchema(), 'theme' => 'bootstrap3'))
                 ->add('json_form_'.$this->getId(), HiddenType::class)
-                ->add('submit_'.$this->getId(), SubmitType::class, array('label' => 'Enregistrer'));
+                ->add('submit_'.$this->getId(), SubmitType::class, array('label' => "widget.saveConfig", "translation_domain" => "TkuskaDashboardBundle"));
             
             return $form->createView();
         }

@@ -1,3 +1,4 @@
+
 <div class="grid-stack-item" id="widget_{{ widget.id }}" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
     <div class="panel panel-default grid-stack-item-content">
 
@@ -5,17 +6,17 @@
             <div>
                 <span class="pull-left" id="widget_title" data-widget-title-dblclick="true">
                     {% block widget_title %}
-                        {{ widget.title|default(widget.name) }}
+                        {{ widget.title|default(widget.name|trans) }}
                     {% endblock widget_title %}
                     &nbsp;
                 </span>
-                    <button type="button" class="close pull-left" aria-label="Edit" id="edit_{{ widget.id }}" title="Modifier le titre"><span class="fa fa-pencil"></span></button>
+                    <button type="button" class="close pull-left" aria-label="Edit" id="edit_{{ widget.id }}" title="{{ 'widget.editTitle'|trans(domain='TkuskaDashboardBundle') }}"><span class="fa fa-pencil"></span></button>
             </div>
             
 
             {% block widget_buttons %}
                 {% block widget_close_button %}
-                    <button type="button" class="close pull-right" aria-label="Close" id="close_{{ widget.id }}" title="Supprimer le widget"><span class="fa fa-close"></span></button>
+                    <button type="button" class="close pull-right" aria-label="Close" id="close_{{ widget.id }}" title="{{ 'widget.deleteWidget'|trans(domain='TkuskaDashboardBundle') }}"><span class="fa fa-close"></span></button>
                 {% endblock %}
                 <span class="pull-right">
                     &nbsp;
@@ -23,7 +24,7 @@
                 </span>
                 {% if widget.JsonSchema %}
                     {% block widget_config_button %}
-                        <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'Configuration du widget "' ~ widget.name ~ '"' }}"><span class="fa fa-cog"></span></button>
+                        <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='TkuskaDashboardBundle') ~ ' "' ~ widget.name ~ '"' }}"><span class="fa fa-cog"></span></button>
                     {% endblock %}
                 {% endif %}
 
@@ -46,7 +47,7 @@
 
                 <script>
 
-                    // Save config in a field with the correct data [ Symfony is screwing up some field values ]
+                    {# Save config in a field with the correct data [ Symfony is screwing up some field values ] #}
                     window.editor{{ id }}.on("change",  function() {
                         $("#form_json_{{ id }}").val(JSON.stringify(window.editor{{ id }}.getValue()));
                     });
