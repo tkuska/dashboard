@@ -2,7 +2,7 @@
 <div class="grid-stack-item" id="widget_{{ widget.id }}" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
     <div class="panel panel-default grid-stack-item-content">
 
-        <div class="panel-heading clearfix" style="position: sticky; top: 0">
+        <div class="panel-heading clearfix" style="position: sticky; top: 0; z-index: 1;">
             <div>
                 <span class="pull-left" id="widget_title" data-widget-title-dblclick="true">
                     {% block widget_title %}
@@ -22,12 +22,9 @@
                     &nbsp;
                     &nbsp;
                 </span>
-                {% if widget.JsonSchema %}
-                    {% block widget_config_button %}
-                        <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='TkuskaDashboardBundle') ~ ' "' ~ widget.name ~ '"' }}"><span class="fa fa-cog"></span></button>
-                    {% endblock %}
-                {% endif %}
-
+                {% block widget_config_button %}
+                    <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='TkuskaDashboardBundle') ~ ' "' ~ widget.name ~ '"' }}"><span class="fa fa-cog"></span></button>
+                {% endblock %}
             {% endblock widget_buttons %}
         </div>
 
@@ -36,24 +33,31 @@
         {% endblock widget_body %}
 
         {% block widget_config %}
-            {% if form is defined and form %}
-                {% set id = 'form_' ~ widget.id %}
-                <div id="form_{{ widget.id }}" style="display: none;" class="panel-body">
-                    {{ form_start(form, {'action': path('widget_save_config', parameters = {id: widget.id}), 'method': 'POST'}) }}
-                    {{ form_widget(form.Configuration, { 'id': id }) }}
-                    {{ form_rest(form) }}
-                    {{ form_end(form) }}
-                </div>
+            <div id="form_{{ widget.id }}" style="display: none;" class="panel-body">
 
-                <script>
+                {# CONFIGURATION FORM #}
+                {% if form is defined and form %}
+                    {% set id = 'form_' ~ widget.id %}
+                        {{ form_start(form, {'action': path('widget_save_config', parameters = {id: widget.id}), 'method': 'POST'}) }}
+                        {{ form_widget(form.Configuration, { 'id': id }) }}
+                        {{ form_rest(form) }}
+                        {{ form_end(form) }}
 
-                    {# Save config in a field with the correct data [ Symfony is screwing up some field values ] #}
-                    window.editor{{ id }}.on("change",  function() {
-                        $("#form_json_{{ id }}").val(JSON.stringify(window.editor{{ id }}.getValue()));
-                    });
+                    <script>
+                        {# Save config in a field with the correct data [ Symfony is screwing up some field values ] #}
+                        window.editor{{ id }}.on("change",  function() {
+                            $("#form_json_{{ id }}").val(JSON.stringify(window.editor{{ id }}.getValue()));
+                        });
+                    </script>
+                {% endif %}
 
-                </script>
-            {% endif %}
+                {# RESET BUTTON - outside bc it includes the widget title #}
+                <a href="{{ path('widget_reset_config', { id: widget.id }) }}" style="all: unset;"> {# todo: maybe we can style the buttons #}
+                    <button>
+                        {{ 'widget.defaultConfig'|trans }}
+                    </button>
+                </a>
+            </div>
         {% endblock widget_config %}
 
         {% block widget_footer %}

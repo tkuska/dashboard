@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Tkuska\DashboardBundle\WidgetProvider;
 use Tkuska\DashboardBundle\Entity\Widget;
@@ -16,6 +17,16 @@ use Tkuska\DashboardBundle\Entity\Widget;
  */
 class DashboardController extends Controller
 {
+    /**
+     * @var EntityManager
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
+
     /**
      * @Route("/dashboard/add_widget/{type}", options={"expose"=true}, name="add_widget")
      */ 
@@ -27,9 +38,8 @@ class DashboardController extends Controller
         $widget->importConfig($widgetType);
         $widget->setUserId($this->getUser()->getId());
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($widget);
-        $em->flush();
+        $this->em->persist($widget);
+        $this->em->flush();
 
         return $this->renderWidget($provider, $widget->getId());
     }
@@ -39,12 +49,11 @@ class DashboardController extends Controller
      */
     public function removeWidgetAction($id)
     {
-        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
+        $widget = $this->em->getRepository(Widget::class)->find($id);
         
         if ($widget) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($widget);
-            $em->flush();
+            $this->em->remove($widget);
+            $this->em->flush();
         }
         
         return new JsonResponse(true);
@@ -55,7 +64,7 @@ class DashboardController extends Controller
      */
     public function updateWidgetAction($id, $x, $y, $width, $height)
     {
-        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
+        $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {
             $widget
@@ -65,8 +74,7 @@ class DashboardController extends Controller
                 ->setHeight($height)
             ;
 
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
+            $this->em->flush();
         }
 
         return new JsonResponse(true);
@@ -77,12 +85,11 @@ class DashboardController extends Controller
      */
     public function updateWidgetTitleAction($id, $title)
     {
-        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
+        $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {
             $widget->setTitle($title);
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
+            $this->em->flush();
         }
 
         return new JsonResponse(true);
@@ -93,7 +100,7 @@ class DashboardController extends Controller
      */
     public function renderWidget(WidgetProvider $provider, $id)
     {
-        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
+        $widget = $this->em->getRepository(Widget::class)->find($id);
 
         $response = new Response();
         $response->setContent("");
@@ -116,12 +123,29 @@ class DashboardController extends Controller
     public function saveConfig(Request $request, WidgetProvider $provider, $id)
     {
         $config = $request->request->get("form")["json_form_".$id];
-        $widget = $this->getDoctrine()->getRepository(Widget::class)->find($id);
+        $widget = $this->em->getRepository(Widget::class)->find($id);
         
         if ($widget) {
             $widget->setConfig($config);
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->em->getManager();
             $em->flush();
+        }
+
+        return $this->redirectToRoute("homepage");
+    }
+
+    /**
+     * Reset config and title of widget.
+     * @Route("/dashboard/widget_reset_config/{id}", name="widget_reset_config")
+     */
+    public function resetConfig($id)
+    {
+        $widget = $this->em->getRepository(Widget::class)->find($id);
+
+        if ($widget) {
+            $widget->setTitle(null);
+            $widget->setConfig(null);
+            $this->em->flush();
         }
 
         return $this->redirectToRoute("homepage");
