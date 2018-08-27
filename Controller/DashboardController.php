@@ -127,8 +127,7 @@ class DashboardController extends Controller
         
         if ($widget) {
             $widget->setConfig($config);
-            $em = $this->em->getManager();
-            $em->flush();
+            $this->em->flush();
         }
 
         return $this->redirectToRoute("homepage");
