@@ -26,6 +26,10 @@
                 <source>widget.saveConfig</source>
                 <target>Enregistrer</target>
             </trans-unit>
+            <trans-unit id="widget.defaultConfig">
+                <source>widget.defaultConfig</source>
+                <target>Configuration par défaut</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

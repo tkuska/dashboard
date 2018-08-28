@@ -178,7 +178,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
             $form = $formFactory->create()
                 ->add('Configuration', JsonType::class, array('schema' => $this->getJsonSchema(), 'theme' => 'bootstrap3'))
                 ->add('json_form_'.$this->getId(), HiddenType::class)
-                ->add('submit_'.$this->getId(), SubmitType::class, array('label' => "widget.saveConfig", "translation_domain" => "TkuskaDashboardBundle"));
+            ;
             
             return $form->createView();
         }
