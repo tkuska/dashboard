@@ -32,6 +32,8 @@
                     grid.commit();
 
                     addWidgetListeners($(response).data('widget-id'));
+                },
+                complete: function (response) {
                     toggleSpin();
                 }
             });
@@ -173,8 +175,10 @@
                             grid.commit();
 
                             addWidgetListeners({{ widget.id }});
-
+                        },
+                        complete: function(response) {
                             // When all widgets are rendered, enable ability for grid to change
+                            // do this in 'complete' so if some widgets have an error, still allow grid editing
                             widgetsRendered++;
                             if (widgetsRendered == {{ widgets|length }}) {
                                 enableGridChanges();
