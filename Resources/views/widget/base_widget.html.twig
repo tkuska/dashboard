@@ -23,7 +23,7 @@
                     &nbsp;
                 </span>
                 {% block widget_config_button %}
-                    <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='TkuskaDashboardBundle') ~ ' "' ~ widget.name ~ '"' }}"><span class="fa fa-cog"></span></button>
+                    <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='TkuskaDashboardBundle') ~ ' "' ~ widget.name|trans ~ '"' }}"><span class="fa fa-cog"></span></button>
                 {% endblock %}
             {% endblock widget_buttons %}
         </div>
