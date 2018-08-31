@@ -177,10 +177,10 @@ class DashboardController extends Controller
     public function dashboardAction(WidgetProvider $provider)
     {
         $user = $this->getUser();
+        $widget_types = $provider->getWidgetTypes();
 
         if ($user) {
             $widgets = $provider->getMyWidgets();
-            $widget_types = $provider->getWidgetTypes();
 
             // l'utilisateur n'a pas de widgets, on met ceux par défaut.
             if (!$widgets) {
