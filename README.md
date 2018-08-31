@@ -45,6 +45,6 @@ Your templates should extend the base widget template, because it has some inter
 {% extends '@TkuskaDashboard/widget/base_widget.html.twig' %}
 ```
 
-If you use the widget coniguration (getJsonSchema) you must pass the form to the template with getConfigForm as 'form'.
+If you use the widget configuration (getJsonSchema) you must pass the form to the template with getConfigForm as 'form'.
 
 This method renders the widget that is shown. All your logic should be in there.
