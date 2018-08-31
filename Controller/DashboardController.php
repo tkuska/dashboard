@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Tkuska\DashboardBundle\WidgetProvider;
@@ -23,9 +23,15 @@ class DashboardController extends Controller
      */
     private $em;
 
-    public function __construct(EntityManagerInterface $em)
+    /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
     {
         $this->em = $em;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -155,9 +161,12 @@ class DashboardController extends Controller
      * Delete current user's widgets.
      * @Route("/dashboard/delete_my_widgets", name="delete_my_widgets")
      */
-    public function deleteMyWidgets(UserInterface $user)
+    public function deleteMyWidgets()
     {
-        $this->em->getRepository(Widget::class)->deleteMyWidgets($user->getId());
+        $user = $this->getUser();
+        if ($user) {
+            $this->em->getRepository(Widget::class)->deleteMyWidgets($user->getId());
+        }
 
         return $this->redirectToRoute("homepage");
     }
@@ -165,20 +174,35 @@ class DashboardController extends Controller
     /**
      * @Route("/", name="homepage", methods="GET")
      */
-    public function dashboardAction(WidgetProvider $provider, UserInterface $user)
+    public function dashboardAction(WidgetProvider $provider)
     {
-        $widgets = $provider->getMyWidgets();
-        $widget_types = $provider->getWidgetTypes();
+        $user = $this->getUser();
 
-        // l'utilisateur n'a pas de widgets, on met ceux par défaut.
-        if (!$widgets) {
-            $provider->setDefaultWidgetsForUser($user->getId());
+        if ($user) {
             $widgets = $provider->getMyWidgets();
+            $widget_types = $provider->getWidgetTypes();
+
+            // l'utilisateur n'a pas de widgets, on met ceux par défaut.
+            if (!$widgets) {
+                $provider->setDefaultWidgetsForUser($user->getId());
+                $widgets = $provider->getMyWidgets();
+            }
+        } else {
+            $widgets = [];
         }
 
         return $this->render("@TkuskaDashboard/dashboard/dashboard.html.twig", array(
             "widgets" => $widgets,
             "widget_types" => $widget_types,
         ));
+    }
+
+    protected function getUser()
+    {
+        if ($this->tokenStorage->getToken() && is_object($this->tokenStorage->getToken()->getUser())) {
+            return $this->tokenStorage->getToken()->getUser();
+        }
+
+        return null;
     }
 }
