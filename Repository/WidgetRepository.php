@@ -38,18 +38,29 @@ class WidgetRepository extends ServiceEntityRepository
     // }
 
     /**
-     * Get a list of IDs of the current user's widgets
+     * Get the current user's widgets.
      * @param \Symfony\Component\Security\Core\User\UserInterface $user
      * @return \Doctrine\ORM\QueryBuilder
      */
     public function getMyWidgets(UserInterface $user)
     {
-        $userId = method_exists($user, 'getId') ? $user->getId() : -1;
+        $userId = method_exists($user, 'getId') ? $user->getId() : null;
 
         return $this->createQueryBuilder("w")
             ->select('w')
             ->where('w.user_id = :user_id')
             ->setParameter('user_id', $userId)
+        ;
+    }
+
+    public function deleteMyWidgets($user_id)
+    {
+        $this->createQueryBuilder("w")
+            ->delete()
+            ->where("w.user_id = :user_id")
+            ->setParameter("user_id", $user_id)
+            ->getQuery()
+            ->execute()
         ;
     }
 }

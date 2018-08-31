@@ -69,13 +69,13 @@ class WidgetProvider
     }
 
     /**
-     * Returns collection of logged user widgets
+     * Returns current user's widgets
      */
     public function getMyWidgets()
     {
         // Get user.
         $user = $this->security->getToken()->getUser();
-        if ($user === "anon.") {
+        if (!is_object($user)) {
             return [];
         }
 
@@ -86,8 +86,26 @@ class WidgetProvider
                 ->getResult();
         
         // Initialize actual widgets.
+        return $this->initializeWidgets($myWidgets);
+    }
+
+    /**
+     * Returns default widgets.
+     */
+    public function getDefaultWidgets()
+    {
+        $defaultWidgets = $this->em->getRepository(Widget::class)->getDefaultWidgets();
+
+        return $this->initializeWidgets($defaultWidgets);
+    }
+
+    /**
+     * Convert Widgets entites into actual Widgets (widget types)
+     */
+    private function initializeWidgets($widgets)
+    {
         $return = [];
-        foreach ($myWidgets as $widget) {
+        foreach ($widgets as $widget) {
 
             $widgetType = $this->getWidgetType($widget->getType());
             if ($widgetType) {  // the widget could have been deleted
@@ -96,5 +114,31 @@ class WidgetProvider
             
         }
         return $return;
+    }
+
+    /**
+     * Sert à copier les widgets par défaut vers les widgets de l'utilisateur.
+     * Cela évite que l'utilisateur puisse modifier les widgets par défaut
+     */
+    public function setDefaultWidgetsForUser($user_id)
+    {
+        $sql = "
+            INSERT INTO widgets
+            SELECT
+                NULL AS id,
+                x,
+                y,
+                width,
+                height,
+                type,
+                " . $user_id . " AS user_id,
+                NULL AS config,
+                NULL AS title
+            FROM widgets
+            WHERE user_id IS NULL
+        ";
+
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $stmt->execute();
     }
 }

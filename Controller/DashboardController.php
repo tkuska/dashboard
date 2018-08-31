@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Tkuska\DashboardBundle\WidgetProvider;
@@ -149,14 +150,31 @@ class DashboardController extends Controller
 
         return $this->redirectToRoute("homepage");
     }
+
+    /**
+     * Delete current user's widgets.
+     * @Route("/dashboard/delete_my_widgets", name="delete_my_widgets")
+     */
+    public function deleteMyWidgets(UserInterface $user)
+    {
+        $this->em->getRepository(Widget::class)->deleteMyWidgets($user->getId());
+
+        return $this->redirectToRoute("homepage");
+    }
     
     /**
      * @Route("/", name="homepage", methods="GET")
      */
-    public function dashboardAction(WidgetProvider $provider)
+    public function dashboardAction(WidgetProvider $provider, UserInterface $user)
     {
         $widgets = $provider->getMyWidgets();
         $widget_types = $provider->getWidgetTypes();
+
+        // l'utilisateur n'a pas de widgets, on met ceux par défaut.
+        if (!$widgets) {
+            $provider->setDefaultWidgetsForUser($user->getId());
+            $widgets = $provider->getMyWidgets();
+        }
 
         return $this->render("@TkuskaDashboard/dashboard/dashboard.html.twig", array(
             "widgets" => $widgets,
