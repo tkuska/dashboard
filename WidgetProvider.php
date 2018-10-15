@@ -122,23 +122,25 @@ class WidgetProvider
      */
     public function setDefaultWidgetsForUser($user_id)
     {
-        $sql = "
-            INSERT INTO widgets
-            SELECT
-                NULL AS id,
-                x,
-                y,
-                width,
-                height,
-                type,
-                " . $user_id . " AS user_id,
-                NULL AS config,
-                NULL AS title
-            FROM widgets
-            WHERE user_id IS NULL
-        ";
+        if ($user_id) {
+            $sql = "
+                INSERT INTO widgets
+                SELECT
+                    NULL AS id,
+                    x,
+                    y,
+                    width,
+                    height,
+                    type,
+                    " . $user_id . " AS user_id,
+                    NULL AS config,
+                    NULL AS title
+                FROM widgets
+                WHERE user_id IS NULL
+            ";
 
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $stmt->execute();
+            $stmt = $this->em->getConnection()->prepare($sql);
+            $stmt->execute();
+        }
     }
 }
