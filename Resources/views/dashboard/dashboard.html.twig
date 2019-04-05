@@ -29,11 +29,13 @@
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                 {% for type, widget_type in widget_types %}
+                    {% if widget_type.support() %}
                     <li>
                         <a href="#" onclick="addWidget('{{ widget_type.type }}')">
                             {{ widget_type.name|trans }}
                         </a>
                     </li>
+                    {%  endif %}
                 {% endfor %}
                     <li>
                         <a href="{{ path('delete_my_widgets') }}">
@@ -54,7 +56,9 @@
 
     <div id="grid-stack" class="grid-stack" data-gs-animate="yes">
         {% for widget in widgets %}
+            {%  if widget.support() %}
             {{ widget.render()|raw }}
+            {%  endif %}
         {% endfor %}
     </div>
     <script>

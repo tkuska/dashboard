@@ -184,4 +184,8 @@ abstract class AbstractWidget implements WidgetTypeInterface
         }
         return null;
     }
+
+    public function support():bool{
+        return true;
+    }
 }
