@@ -51,6 +51,8 @@ class DashboardController extends Controller
         return $this->renderWidget($provider, $widget->getId());
     }
 
+
+
     /**
      * @Route("/dashboard/remove_widget/{id}", options={"expose"=true}, name="remove_widget")
      */
@@ -101,6 +103,7 @@ class DashboardController extends Controller
 
         return new JsonResponse(true);
     }
+
 
     /**
      * @Route("/dashboard/render_widget/{id}", options={"expose"=true}, name="render_widget")
