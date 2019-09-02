@@ -188,4 +188,8 @@ abstract class AbstractWidget implements WidgetTypeInterface
     public function support():bool{
         return true;
     }
+
+    public function supportXhr():bool{
+        return true;
+    }
 }

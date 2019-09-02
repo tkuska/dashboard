@@ -58,12 +58,16 @@
     <div id="grid-stack" class="grid-stack" data-gs-animate="yes">
         {% for widget in widgets %}
             {%  if widget.support() %}
-                <div class="grid-stack-item" id="widget_{{ widget.id }}" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
-                    <div class="panel panel-default grid-stack-item-content">
-                        {# no use hinclude because you have to change config of framework.yaml (fragments and templating.engine) #}
-                        <hx:include src="{{ url('render_widget',{'id':widget.id})  }}" class="included include_500">{{ include('@TkuskaDashboard/widget/empty_widget.html.twig', { widget:widget}) }}</hx:include>
+                {%  if widget.supportXhr() %}
+                    <div class="grid-stack-item" id="widget_{{ widget.id }}" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
+                        <div class="panel panel-default grid-stack-item-content">
+                            {# no use hinclude because you have to change config of framework.yaml (fragments and templating.engine) #}
+                            <hx:include src="{{ path('render_widget',{'id':widget.id})  }}" class="included include_500">{{ include('@TkuskaDashboard/widget/empty_widget.html.twig', { widget:widget}) }}</hx:include>
+                        </div>
                     </div>
-                </div>
+                {%  else %}
+                    {{ widget.render()|raw }}
+                {%  endif %}
             {%  endif %}
         {% endfor %}
     </div>
@@ -96,8 +100,6 @@
 
                         // Update the grid
                         var grid = $('#grid-stack').data('gridstack');
-                        console.log($('#grid-stack'));
-                        console.log(grid);
                         grid.addWidget(response);
                         grid.batchUpdate();
                         grid.commit();
@@ -112,15 +114,13 @@
 
             // Add the event listeners for the buttons of the widget.
             function addWidgetListeners(id) {
-
                 var grid = $('.grid-stack').data('gridstack');
-                console.log('listener');
                 // Close widget button
-                $('#close_' + id).click(function () {
+                $('body').on('click', '#close_' + id, function () {
                     var widget = $(this).closest('.grid-stack-item');
                     var id = widget.data('widget-id');
                     $.ajax(Routing.generate('remove_widget', {id: id}));
-                    grid.removeWidget(widget);
+                    grid.removeWidget(widget[0]);
                 });
 
                 // Configure widget button
