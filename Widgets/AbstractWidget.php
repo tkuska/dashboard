@@ -185,11 +185,21 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return null;
     }
 
-    public function support():bool{
+    /**
+     * @return bool
+     * If returns false, this widget won't be shown
+     */
+    public function support(): bool
+    {
         return true;
     }
 
-    public function supportXhr():bool{
+    /**
+     * @return bool
+     * If returns false, this widget will load directly
+     */
+    public function supportsAjax(): bool
+    {
         return true;
     }
 }

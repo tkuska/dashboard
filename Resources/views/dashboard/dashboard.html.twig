@@ -55,22 +55,64 @@
         </h2>
     </div>
 
+    {# MAIN WIDGET GRID #}
     <div id="grid-stack" class="grid-stack" data-gs-animate="yes">
-        {% for widget in widgets %}
-            {%  if widget.support() %}
-                {%  if widget.supportXhr() %}
-                    <div class="grid-stack-item" id="widget_{{ widget.id }}" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
-                        <div class="panel panel-default grid-stack-item-content">
-                            {# no use hinclude because you have to change config of framework.yaml (fragments and templating.engine) #}
-                            <hx:include src="{{ path('render_widget',{'id':widget.id})  }}" class="included include_500">{{ include('@TkuskaDashboard/widget/empty_widget.html.twig', { widget:widget}) }}</hx:include>
-                        </div>
-                    </div>
-                {%  else %}
-                    {{ widget.render()|raw }}
-                {%  endif %}
-            {%  endif %}
+        <script>
+            var widgetsRendered = 0;
+            var totalWidgets = {{ widgets | length() }};
+
+            function ajaxRenderWidget(widgetId) {
+                $.ajax({
+                    url: Routing.generate('render_widget', {id: widgetId}),
+                    success: function (response) {
+
+                        // Replace the empty widget with response
+                        var emptyWidget = $("#widget_" + widgetId);
+                        emptyWidget.replaceWith(response);
+
+                        addWidgetListeners(widgetId);
+                    },
+                    complete: function(response) {
+                        // When all widgets are rendered, enable ability for grid to change
+                        // do this in 'complete' so if some widgets have an error, still allow grid editing
+                        widgetsRendered++;
+                        if (widgetsRendered == totalWidgets) {
+                            enableGridChanges();
+                        }
+                    }
+                });
+            }
+        </script>
+        {% for widget in widgets if widget.support() %}
+
+            {% if widget.supportsAjax() %}
+
+                {# Put empty widget with loading icon #}
+                {{ include('@TkuskaDashboard/widget/empty_widget.html.twig', { widget: widget}) }}
+
+                {# Use ajax request to get widget insides. #}
+                <script>
+                    $(function() {
+                        ajaxRenderWidget({{ widget.id }});
+                    });
+                </script>
+
+            {% else %}
+                {# Directly load the widget. #}
+                {{ widget.render | raw() }}
+            {% endif %}
+            <script>
+                // Add the widget to grid
+                var grid = $('.grid-stack').data('gridstack');
+                var widget = $("#widget_{{ widget.id }}");
+
+                grid.addWidget(widget);
+                grid.batchUpdate();
+                grid.commit();
+            </script>
         {% endfor %}
     </div>
+
     <script>
             $(function() {
                 $('.grid-stack').gridstack({
@@ -84,10 +126,9 @@
                     }
                 });
                 grid = $('.grid-stack').data('gridstack');
-                {% for widget in widgets %}
-                    addWidgetListeners({{ widget.id }});
-                {% endfor %}
-                enableGridChanges();
+{#                {% for widget in widgets %}#}
+{#                    addWidgetListeners({{ widget.id }});#}
+{#                {% endfor %}#}
             });
 
 
@@ -196,8 +237,6 @@
                 grid = $('.grid-stack').data('gridstack');
                 grid.enable();
             }
-
-
     </script>
 
     <div style="height: 300px"></div>
