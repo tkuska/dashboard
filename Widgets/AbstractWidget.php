@@ -31,7 +31,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @var int y position
      */
-    protected $y = 1000;
+    protected $y = 0;
 
     /**
      * @var int widget width
@@ -183,5 +183,15 @@ abstract class AbstractWidget implements WidgetTypeInterface
             return $form->createView();
         }
         return null;
+    }
+
+    public function support(): bool
+    {
+        return true;
+    }
+
+    public function supportsAjax(): bool
+    {
+        return true;
     }
 }

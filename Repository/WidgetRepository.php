@@ -20,22 +20,6 @@ class WidgetRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Widget::class);
     }
-    
-    // /**
-    //  * Gets all widgets connected with user user account
-    //  * @param \Symfony\Component\Security\Core\User\UserInterface $user
-    //  * @return \Doctrine\ORM\QueryBuilder
-    //  */
-    // public function getMyWidgets(UserInterface $user)
-    // {
-    //     $userId = method_exists($user, 'getId') ? $user->getId() : -1;
-
-    //     return $this->createQueryBuilder("w")
-    //         ->select('w')
-    //         ->where('w.user_id = :user_id')
-    //         ->setParameter('user_id', $userId)
-    //     ;
-    // }
 
     /**
      * Get the current user's widgets.
@@ -62,5 +46,25 @@ class WidgetRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute()
         ;
+    }
+
+    /**
+     * @param $user_id
+     * @return mixed
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * Obtenir le widget le plus bas de la grille
+     */
+    public function getBottomWidget($user_id)
+    {
+        return $this->createQueryBuilder("w")
+            ->select("")
+            ->where("w.user_id = :user_id")
+            ->setParameter("user_id", $user_id)
+            ->addOrderBy("w.y", "DESC")
+            ->addOrderBy("w.height", "DESC")
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

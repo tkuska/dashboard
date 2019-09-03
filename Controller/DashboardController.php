@@ -41,9 +41,17 @@ class DashboardController extends Controller
     {
         $widgetType = $provider->getWidgetType($type);
 
+        $user_id = method_exists($this->getUser(), 'getId') ? $this->getUser()->getId() : null;
+
         $widget = new Widget();
         $widget->importConfig($widgetType);
-        $widget->setUserId($this->getUser()->getId());
+        $widget->setUserId($user_id);
+
+        // We just put the new widget under the existing ones
+        $bottomWidget = $this->em->getRepository(Widget::class)->getBottomWidget($user_id);
+        if ($bottomWidget) {
+            $widget->setY($bottomWidget->getY() + $bottomWidget->getHeight());
+        }
 
         $this->em->persist($widget);
         $this->em->flush();
