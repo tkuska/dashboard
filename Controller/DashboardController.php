@@ -65,15 +65,15 @@ class DashboardController extends Controller
     public function removeWidgetAction($id)
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
-        
+
         if ($widget) {
             $this->em->remove($widget);
             $this->em->flush();
         }
-        
+
         return new JsonResponse(true);
     }
-    
+
     /**
      * @Route("/dashboard/update_widget/{id}/{x}/{y}/{width}/{height}", options={"expose"=true}, name="update_widget")
      */
