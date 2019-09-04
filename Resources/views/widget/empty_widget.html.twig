@@ -1,10 +1,9 @@
 {% extends '@TkuskaDashboard/widget/base_widget.html.twig' %}
 
-
 {% block widget_body %}
-    <div>
-        <i style="font-size:100px;" class="fa fa-circle-o-notch fa-spin fa-fw"></i>
-        <span class="sr-only">Loading...</span>
+    <div class="panel-body text-center">
+        <i style="font-size:100px;" class="fa fa-circle-o-notch fa-spin"></i>
+        <span class="sr-only">{{ 'widget.loading'|trans(domain='TkuskaDashboardBundle') }}</span>
     </div>
 {% endblock %}
 

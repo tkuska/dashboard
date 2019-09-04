@@ -34,6 +34,10 @@
                 <source>reset_widgets</source>
                 <target>Widgets par défaut</target>
             </trans-unit>
+            <trans-unit id="widget.loading">
+                <source>widget.loading</source>
+                <target>Chargement en cours</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

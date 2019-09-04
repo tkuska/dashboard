@@ -75,17 +75,23 @@
             {% for widget in widgets if widget.support() %}
 
                 {% if widget.supportsAjax() %}
+
                     {# Dynamically load the widget. #}
                     $(function() {
+
+
+                        var grid = $('.grid-stack').data('gridstack');
+
+                        var emptyWidget = $("{{ include('@TkuskaDashboard/widget/empty_widget.html.twig', { widget: widget}) | escape("js") }}");
+                        grid.addWidget(emptyWidget);
+
                         $.ajax({
                             url: Routing.generate('render_widget', {id: {{ widget.id }}}),
                             success: function (response) {
 
                                 // Update the grid
-                                var grid = $('.grid-stack').data('gridstack');
+                                grid.removeWidget(emptyWidget, true);
                                 grid.addWidget(response);
-                                grid.batchUpdate();
-                                grid.commit();
 
                                 addWidgetListeners({{ widget.id }});
                             },
@@ -106,8 +112,6 @@
                         var grid = $('.grid-stack').data('gridstack');
                         var widget = $("{{ widget.render() | escape("js") }}");
                         grid.addWidget(widget);
-                        grid.batchUpdate();
-                        grid.commit();
 
                         addWidgetListeners({{ widget.id }});
                         // When all widgets are rendered, enable ability for grid to change
@@ -131,7 +135,7 @@
 
     <script type="text/javascript">
 
-        // Add a widget to the grid.
+        // Add a widget to the grid & database (different from grid.addWidget)
         function addWidget(type) {
             toggleSpin();
             $.ajax({
@@ -141,8 +145,6 @@
                     // Update the grid
                     var grid = $('.grid-stack').data('gridstack');
                     grid.addWidget(response);
-                    grid.batchUpdate();
-                    grid.commit();
 
                     addWidgetListeners($(response).data('widget-id'));
                 },
@@ -219,7 +221,7 @@
         }
 
         function toggleSpin() {
-            $("#gs-spin").toggleClass("fa-spinner");
+            $("#gs-spin").toggleClass("fa-circle-o-notch");
         }
 
         function toggleConfigPanel(cogButton, id) {

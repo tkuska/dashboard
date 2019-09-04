@@ -9,7 +9,11 @@
             <trans-unit id="available_widgets">
                 <source>available_widgets</source>
                 <target>Available widgets</target>
-            </trans-unit>           
+            </trans-unit>
+            <trans-unit id="widget.loading">
+                <source>widget.loading</source>
+                <target>Loading</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
