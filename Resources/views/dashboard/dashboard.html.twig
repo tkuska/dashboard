@@ -147,6 +147,7 @@
                     grid.addWidget(response);
 
                     addWidgetListeners($(response).data('widget-id'));
+                    enableGridChanges();
                 },
                 complete: function (response) {
                     toggleSpin();
