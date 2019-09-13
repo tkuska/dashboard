@@ -1,7 +1,5 @@
 This bundle provides a dashboard with customizable widgets.
 
-Note that the docs are still in work, and that the bundle will probably be rebranded.
-
 ## Setting up the bundle
 
 Add this to services.yaml
@@ -36,6 +34,9 @@ Existing methods that can be overriden:
 - getName: must return general name of the widget
 - getJsonSchema: must return an array (that will be json encoded) that represents an Json Schema, for the widget configuration. (see also https://github.com/json-editor/json-editor)
 - getConfigForm: makes the configuration form. You shouldn't need to modify it, but it can happen in some cases (ex: bootstrap version)
+- support: returns true if widget is supported. If not, user won't be able to add such widget nor render it
+- supportsAjax: returns true if widget should be loaded asynchronously. If not, it will be loaded directly with the dashboard
+- transformResponse: takes Response representing the widget as argument and returns response. By default, it caches widgets for 300 seconds.
 
 You *must* implement the render() method.
 
@@ -44,6 +45,8 @@ Your templates should extend the base widget template, because it has some inter
 ```twig
 {% extends '@TkuskaDashboard/widget/base_widget.html.twig' %}
 ```
+
+Note that base template uses Bootstrap panels, which means it is better to put your widget body in a ```<div class="panel-body">```.
 
 If you use the widget configuration (getJsonSchema) you must pass the form to the template with getConfigForm as 'form'.
 
