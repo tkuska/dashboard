@@ -2,6 +2,9 @@
 
 namespace Tkuska\DashboardBundle\Widgets;
 
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Cache\ItemInterface;
 use Twig_Environment as Environment;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -193,5 +196,20 @@ abstract class AbstractWidget implements WidgetTypeInterface
     public function supportsAjax(): bool
     {
         return true;
+    }
+
+    public function transformResponse(Response $response): Response
+    {
+        $cache = new FilesystemAdapter();
+        $uniqueKey = "widget_cache_" . $this->getId();
+        $response = $cache->get($uniqueKey, function (ItemInterface $item) use ($response) {
+
+            // 5 minutes
+            $item->expiresAfter(300);
+
+            return $response;
+        });
+
+        return $response;
     }
 }
