@@ -129,7 +129,7 @@ class DashboardController extends Controller
             }
 
         }
-        return $response;
+        return $widgetType->transformResponse($response);
     }
 
     /**
