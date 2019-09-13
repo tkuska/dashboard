@@ -189,9 +189,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     }
 
     /**
-     * @return bool
-     *
-     * Is the widget supported ?
+     * @inheritdoc
      */
     public function support(): bool
     {
@@ -199,9 +197,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     }
 
     /**
-     * @return bool
-     *
-     * Should the widget be asynchronously loaded ?
+     * @inheritdoc
      */
     public function supportsAjax(): bool
     {
@@ -209,13 +205,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     }
 
     /**
-     * @param Response $response
-     * @return Response
-     * @throws \Psr\Cache\InvalidArgumentException
-     *
-     * The Response that represents this widget passes through this function,
-     * so you can edit your Response.
-     * By default, it caches the widget for 300 seconds. Make sure to not cache editable widgets, such as post-its.
+     * @inheritdoc
      */
     public function transformResponse(Response $response): Response
     {
