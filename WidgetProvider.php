@@ -3,7 +3,7 @@
 namespace Tkuska\DashboardBundle;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Tkuska\DashboardBundle\Entity\Widget;
 
@@ -33,9 +33,9 @@ class WidgetProvider
     /**
      * 
      * @param \Doctrine\ORM\EntityManager $em
-     * @param \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security
+     * @param Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface $security
      */
-    public function __construct(EntityManagerInterface $em, TokenStorage $security, iterable $widget_types)
+    public function __construct(EntityManagerInterface $em, TokenStorageInterface $security, iterable $widget_types)
     {
         $this->em = $em;
         $this->security = $security;
