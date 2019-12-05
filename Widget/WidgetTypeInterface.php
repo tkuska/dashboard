@@ -75,14 +75,7 @@ interface WidgetTypeInterface
      */
     public function supportsAjax(): bool;
 
-    /**
-     * @param Response $response
-     * @return Response
-     * @throws \Psr\Cache\InvalidArgumentException
-     *
-     * The Response that represents this widget passes through this function,
-     * so you can edit your Response.
-     * By default, it caches the widget for 300 seconds. Make sure to not cache editable widgets, such as post-its.
-     */
-    public function transformResponse(Response $response): Response;
+    public function getCacheKey(): string;
+
+    public function getCacheTimeout(): int;
 }

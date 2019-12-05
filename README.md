@@ -51,3 +51,22 @@ Note that base template uses Bootstrap panels, which means it is better to put y
 If you use the widget configuration (getJsonSchema) you must pass the form to the template with getConfigForm as 'form'.
 
 This method renders the widget that is shown. All your logic should be in there.
+
+
+# cache
+
+by default the cache is enable, you can change timeout and key with
+
+```php
+public function getCacheKey():string{
+    return $this->getId() . "_".md5($this->config);
+}
+
+public function getCacheTimeout():int {
+    return 300;
+}
+```
+
+above you see the default return.
+
+If you want disable the cache for a widget getCacheTimeout have to return 0.

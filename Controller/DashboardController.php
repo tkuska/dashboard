@@ -3,6 +3,7 @@
 namespace Tkuska\DashboardBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Tkuska\DashboardBundle\WidgetProvider;
 use Tkuska\DashboardBundle\Entity\Widget;
 
@@ -113,23 +116,27 @@ class DashboardController extends Controller
     /**
      * @Route("/dashboard/render_widget/{id}", options={"expose"=true}, name="render_widget")
      */
-    public function renderWidget(WidgetProvider $provider, $id)
+    public function renderWidget(CacheInterface $cache ,WidgetProvider $provider, $id)
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
-        $response = new Response();
-        $response->setContent("");
-        
         if ($widget) {
             $widgetType = $provider->getWidgetType($widget->getType());
-
-            if ($widgetType) {
-                $widgetType->setParams($widget);
-                $response->setContent($widgetType->render());
+            $widgetType->setParams($widget);
+            if($widgetType->getCacheTimeout()) {
+                $uniqueKey = "widget_cache_" . $widgetType->getCacheKey();
+                $content = $cache->get($uniqueKey, function (ItemInterface $item) use ($widgetType) {
+                    $item->expiresAfter($widgetType->getCacheTimeout());
+                    return $widgetType->render();
+                });
+            }else{
+                $content = $widgetType->render();
             }
 
         }
-        return $widgetType->transformResponse($response);
+        $response = new Response($content);
+
+        return $response;
     }
 
     /**

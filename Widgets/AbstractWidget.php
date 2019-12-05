@@ -204,21 +204,12 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return true;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function transformResponse(Response $response): Response
-    {
-        $cache = new FilesystemAdapter();
-        $uniqueKey = "widget_cache_" . $this->getId();
-        $response = $cache->get($uniqueKey, function (ItemInterface $item) use ($response) {
-
-            // 5 minutes
-            $item->expiresAfter(300);
-
-            return $response;
-        });
-
-        return $response;
+    public function getCacheKey():string{
+        return $this->getId() . "_".md5($this->config);
     }
+
+    public function getCacheTimeout():int {
+        return 300;
+    }
+    
 }
