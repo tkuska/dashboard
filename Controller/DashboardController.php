@@ -59,7 +59,7 @@ class DashboardController extends Controller
         $this->em->persist($widget);
         $this->em->flush();
 
-        return $this->renderWidget($provider, $widget->getId());
+        return $this->forward(self::class .'::renderWidget', ['id'=>$widget->getId()]);
     }
 
     /**
