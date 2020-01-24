@@ -204,11 +204,20 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return true;
     }
 
-    public function getCacheKey():string{
-        return $this->getId() . "_".md5($this->config);
+    /**
+     * @inheritdoc
+     */
+    public function getCacheKey(): string
+    {
+        $uniqueKey = json_encode(array($this->config, $this->width, $this->height, $this->title, $this->x, $this->y));
+        return $this->getId()."_".md5($uniqueKey);
     }
 
-    public function getCacheTimeout():int {
+    /**
+     * @inheritdoc
+     */
+    public function getCacheTimeout(): int
+    {
         return 300;
     }
     
