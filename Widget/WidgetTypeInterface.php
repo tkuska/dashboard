@@ -75,7 +75,17 @@ interface WidgetTypeInterface
      */
     public function supportsAjax(): bool;
 
+    /**
+     * @return string
+     *
+     * Returns the widget's cache key. It should be based on widget's properties.
+     */
     public function getCacheKey(): string;
 
+    /**
+     * @return int
+     *
+     * In seconds, how long should the cache last.
+     */
     public function getCacheTimeout(): int;
 }
