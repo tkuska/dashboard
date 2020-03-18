@@ -192,7 +192,7 @@ class DashboardController extends AbstractController
     public function dashboardAction(WidgetProvider $provider)
     {
         $user = $this->getUser();
-        $widget_types = $provider->getWidgetTypes();
+        $widgetTypes = $provider->getWidgetTypes();
 
         if ($user) {
             $widgets = $provider->getMyWidgets();
@@ -208,7 +208,7 @@ class DashboardController extends AbstractController
 
         return $this->render("@TkuskaDashboard/dashboard/dashboard.html.twig", array(
             "widgets" => $widgets,
-            "widget_types" => $widget_types,
+            "widget_types" => $widgetTypes,
         ));
     }
 
