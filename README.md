@@ -1,5 +1,9 @@
 This bundle provides a dashboard with customizable widgets.
 
+## Install
+
+`composer require 2lenet/dashboard-bundle`
+
 ## Setting up the bundle
 
 Add this to services.yaml
