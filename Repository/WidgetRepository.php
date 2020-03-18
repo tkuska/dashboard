@@ -5,6 +5,7 @@ namespace Tkuska\DashboardBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Tkuska\DashboardBundle\Entity\Widget;
 
@@ -16,7 +17,7 @@ use Tkuska\DashboardBundle\Entity\Widget;
  */
 class WidgetRepository extends ServiceEntityRepository
 {
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Widget::class);
     }
