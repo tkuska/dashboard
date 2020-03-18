@@ -2,7 +2,7 @@
 
 namespace Tkuska\DashboardBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +19,7 @@ use Tkuska\DashboardBundle\Entity\Widget;
 /**
  * Akcja controller.
  */
-class DashboardController extends Controller
+class DashboardController extends AbstractController
 {
     /**
      * @var EntityManager

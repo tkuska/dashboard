@@ -21,7 +21,8 @@ dashboard_widgets:
 
 You also need to update your database to have widget table.
 ```
-php bin/console doctrine:schema:update
+php bin/console make:migration
+php bin/console doc:mi:mi
 ```
 
 ## Making widgets

@@ -1,4 +1,4 @@
-{% extends  "base.html.twig" %}
+{% extends "base.html.twig" %}
 
 {% block page_title %}Dashboard{% endblock %}
 
@@ -27,12 +27,14 @@
                 {{ 'available_widgets'|trans(domain='TkuskaDashboardBundle') }}
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu">
-                {% for type, widget_type in widget_types if widget_type.support() %}
+                {% for type, widget_type in widget_types %}
+                    {% if widget_type.support() %}
                     <li>
                         <a href="#" onclick="addWidget('{{ widget_type.type }}')">
                             {{ widget_type.name|trans }}
                         </a>
                     </li>
+                    {% endif %}
                 {% endfor %}
                     <li>
                         <a href="{{ path('delete_my_widgets') }}">
@@ -72,8 +74,8 @@
     <div id="grid-stack" class="grid-stack" data-gs-animate="yes">
         <script>
             var widgetsRendered = 0;
-            {% for widget in widgets if widget.support() %}
-
+            {% for widget in widgets %}
+              {% if widget.support() %}
                 {% if widget.supportsAjax() %}
 
                     {# Dynamically load the widget. #}
@@ -122,6 +124,7 @@
                         }
                     });
                 {% endif %}
+              {% endif %}
             {% endfor %}
         </script>
     </div>
