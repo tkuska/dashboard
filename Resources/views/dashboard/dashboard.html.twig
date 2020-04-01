@@ -5,6 +5,21 @@
 {% block head_stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css"/>
+    <style>
+        .grid-stack-item-content {
+            overflow-y: hidden;
+        }
+        .show-hover {
+            display: none;
+        }
+        .panel-heading:hover .show-hover {
+            display: block;
+        }
+        .panel-body {
+            height: calc(100% - 42px);
+            overflow-y: scroll;
+        }
+    </style>
 {% endblock %}
 
 {% block head_javascript %}
