@@ -43,9 +43,11 @@
                         {{ form_widget(form.Configuration, { 'id': id }) }}
                         {{ form_rest(form) }}
                         {# SUBMIT BUTTON #}
-                        <button id="submit_{{ widget.id }}" type="submit">{{ 'widget.saveConfig'|trans(domain='TkuskaDashboardBundle') }}</button>
+                        <button id="submit_{{ widget.id }}" class="btn btn-primary" type="submit">{{ 'widget.saveConfig'|trans(domain='TkuskaDashboardBundle') }}</button>
                         {# RESET CONFIG BUTTON #}
-                        <a href="{{ path('widget_reset_config', { id: widget.id }) }}" style="all: unset;"><button type="button">{{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}</button></a>
+                        <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
+                            {{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}
+                        </a>
                         {{ form_end(form) }}
 
                     <script>
@@ -56,7 +58,9 @@
                     </script>
                 {% else %}
                     {# RESET CONFIG BUTTON #}
-                    <a href="{{ path('widget_reset_config', { id: widget.id }) }}" style="all: unset;"><button type="button">{{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}</button></a>
+                    <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
+                        {{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}
+                    </a>
                 {% endif %}
             </div>
         {% endblock widget_config %}
