@@ -10,8 +10,7 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-use Lle\EasyAdminPlusBundle\Form\Type\JsonType;
-
+use Tkuska\DashboardBundle\Form\Type\JsonType;
 use Tkuska\DashboardBundle\Entity\Widget;
 use Tkuska\DashboardBundle\Widget\WidgetTypeInterface;
 
