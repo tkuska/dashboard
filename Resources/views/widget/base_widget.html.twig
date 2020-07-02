@@ -3,31 +3,32 @@
     <div class="panel panel-default grid-stack-item-content">
 
         <div class="panel-heading clearfix" style="position: sticky; top: 0; z-index: 1;">
-            <div>
-                <span class="pull-left" id="widget_title" data-widget-title-dblclick="true">
+            <div class="pull-left">
+                <span id="widget_title" data-widget-title-dblclick="true">
                     {% block widget_title %}
                         {{ widget.title|default(widget.name|trans) }}
                     {% endblock widget_title %}
                     &nbsp;
                 </span>
-                    <button type="button" class="close pull-left" aria-label="Edit" id="edit_{{ widget.id }}" title="{{ 'widget.editTitle'|trans(domain='TkuskaDashboardBundle') }}">
-                        <span class="fa fa-pen"></span>
-                    </button>
+                <button type="button" class="close show-hover" aria-label="Edit" id="edit_{{ widget.id }}" title="{{ 'widget.editTitle'|trans(domain='TkuskaDashboardBundle') }}">
+                    <span class="fa fa-pen"></span>
+                </button>
             </div>
 
-
-            {% block widget_buttons %}
-                {% block widget_close_button %}
-                    <button type="button" class="close pull-right" aria-label="Close" id="close_{{ widget.id }}" title="{{ 'widget.deleteWidget'|trans(domain='TkuskaDashboardBundle') }}"><span class="fa fa-close"></span></button>
-                {% endblock %}
-                <span class="pull-right">
-                    &nbsp;
-                    &nbsp;
-                </span>
-                {% block widget_config_button %}
-                    <button type="button" class="close pull-right" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='TkuskaDashboardBundle') ~ ' "' ~ widget.name|trans ~ '"' }}"><span class="fa fa-cog"></span></button>
-                {% endblock %}
-            {% endblock widget_buttons %}
+            <div class="pull-right show-hover">
+                {% block widget_buttons %}
+                    {% block widget_close_button %}
+                        <button type="button" class="close" aria-label="Close" id="close_{{ widget.id }}" title="{{ 'widget.deleteWidget'|trans(domain='TkuskaDashboardBundle') }}"><span class="fa fa-close"></span></button>
+                    {% endblock %}
+                    <span class="pull-right">
+                        &nbsp;
+                        &nbsp;
+                    </span>
+                    {% block widget_config_button %}
+                        <button type="button" class="close" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='TkuskaDashboardBundle') ~ ' "' ~ widget.name|trans ~ '"' }}"><span class="fa fa-cog"></span></button>
+                    {% endblock %}
+                {% endblock widget_buttons %}
+            </div>
         </div>
 
         {% block widget_body %}
@@ -39,17 +40,16 @@
                 {# CONFIGURATION FORM #}
                 {% if form is defined and form %}
                     {% set id = 'form_' ~ widget.id %}
-                        {{ form_start(form, {'action': path('widget_save_config', parameters = {id: widget.id}), 'method': 'POST'}) }}
-                        {{ form_widget(form.Configuration, { 'id': id }) }}
-                        {{ form_rest(form) }}
-                        {# SUBMIT BUTTON #}
-                        <button id="submit_{{ widget.id }}" class="btn btn-primary" type="submit">{{ 'widget.saveConfig'|trans(domain='TkuskaDashboardBundle') }}</button>
-                        {# RESET CONFIG BUTTON #}
-                        <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
-                            {{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}
-                        </a>
-                        {{ form_end(form) }}
-
+                    {{ form_start(form, {'action': path('widget_save_config', parameters = {id: widget.id}), 'method': 'POST'}) }}
+                    {{ form_widget(form.Configuration, { 'id': id }) }}
+                    {{ form_rest(form) }}
+                    {# SUBMIT BUTTON #}
+                    <button id="submit_{{ widget.id }}" class="btn btn-primary" type="submit">{{ 'widget.saveConfig'|trans(domain='TkuskaDashboardBundle') }}</button>
+                    {# RESET CONFIG BUTTON #}
+                    <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
+                        {{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}
+                    </a>
+                    {{ form_end(form) }}
                     <script>
                         {# Save config in a field with the correct data [ Symfony is screwing up some field values ] #}
                         window.editor{{ id }}.on("change",  function() {
