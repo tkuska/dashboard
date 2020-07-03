@@ -33,7 +33,7 @@
                 var errors = window.editor{{ id }}.validate();
                 $('#{{ id }}_errors').html("");
                 if (errors.length) {
-                    $('#{{ id }}_errors').html("Invalid JsonSchema (see console)");
+                    console.error("Invalid JsonSchema (see below)");
                     console.log(errors);
                 }
             });
