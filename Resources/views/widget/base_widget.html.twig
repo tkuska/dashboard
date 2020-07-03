@@ -44,11 +44,12 @@
                     {{ form_widget(form.Configuration, { 'id': id }) }}
                     {{ form_rest(form) }}
                     {# SUBMIT BUTTON #}
-                    <button id="submit_{{ widget.id }}" type="submit" class="btn btn-primary">{{ 'widget.saveConfig'|trans(domain='TkuskaDashboardBundle') }}</button>
+                    <button id="submit_{{ widget.id }}" class="btn btn-primary" type="submit">{{ 'widget.saveConfig'|trans(domain='TkuskaDashboardBundle') }}</button>
                     {# RESET CONFIG BUTTON #}
-                    <a href="{{ path('widget_reset_config', { id: widget.id }) }}" class="btn">{{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}</a>
+                    <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
+                        {{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}
+                    </a>
                     {{ form_end(form) }}
-
                     <script>
                         {# Save config in a field with the correct data [ Symfony is screwing up some field values ] #}
                         window.editor{{ id }}.on("change",  function() {
@@ -57,7 +58,9 @@
                     </script>
                 {% else %}
                     {# RESET CONFIG BUTTON #}
-                    <a href="{{ path('widget_reset_config', { id: widget.id }) }}" style="all: unset;"><button type="button">{{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}</button></a>
+                    <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
+                        {{ 'widget.defaultConfig'|trans(domain='TkuskaDashboardBundle') }}
+                    </a>
                 {% endif %}
             </div>
         {% endblock widget_config %}
