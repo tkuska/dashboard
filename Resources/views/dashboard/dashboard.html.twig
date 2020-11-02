@@ -5,23 +5,8 @@
 {% block head_stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css"/>
+    <link rel="stylesheet" href="{{ asset('bundles/tkuskadashboard/css/main.css') }}" />
     <script src="{{ asset('bundles/tkuskadashboard/js/json-editor.min.js') }}"></script>
-    <style>
-        .grid-stack > .grid-stack-item > .grid-stack-item-content {
-            overflow-y: hidden !important;
-        }
-        .show-hover {
-            display: none;
-            max-height: 20px;
-        }
-        .panel-heading:hover .show-hover {
-            display: block;
-        }
-        .panel-body {
-            height: calc(100% - 42px);
-            overflow-y: scroll;
-        }
-    </style>
 {% endblock %}
 
 {% block head_javascript %}

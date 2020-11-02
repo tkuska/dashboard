@@ -14,17 +14,18 @@
                 </button>
             </div>
 
-            <div class="pull-right show-hover">
+            <div class="pull-right">
                 {% block widget_buttons %}
                     {% block widget_close_button %}
-                        <button type="button" class="close" aria-label="Close" id="close_{{ widget.id }}" title="{{ 'widget.deleteWidget'|trans(domain='TkuskaDashboardBundle') }}"><span class="fa fa-close"></span></button>
+                        <button type="button" class="close show-hover" aria-label="Close" id="close_{{ widget.id }}" title="{{ 'widget.deleteWidget'|trans(domain='TkuskaDashboardBundle') }}">
+                            <span class="fa fa-close"></span>
+                        </button>
                     {% endblock %}
-                    <span class="pull-right">
-                        &nbsp;
-                        &nbsp;
-                    </span>
+                    <span class="pull-right">&nbsp;&nbsp;</span>
                     {% block widget_config_button %}
-                        <button type="button" class="close" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='TkuskaDashboardBundle') ~ ' "' ~ widget.name|trans ~ '"' }}"><span class="fa fa-cog"></span></button>
+                        <button type="button" class="close show-hover" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='TkuskaDashboardBundle') ~ ' "' ~ widget.name|trans ~ '"' }}">
+                            <span class="fa fa-cog"></span>
+                        </button>
                     {% endblock %}
                 {% endblock widget_buttons %}
             </div>
