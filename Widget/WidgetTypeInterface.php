@@ -2,6 +2,8 @@
 
 namespace Tkuska\DashboardBundle\Widget;
 
+use Symfony\Component\HttpFoundation\Response;
+
 /**
  * Description of WidgetInterface
  *
@@ -43,9 +45,47 @@ interface WidgetTypeInterface
      * @return string returns widget name
      */
     public function getName();
+
+    /**
+     * @return json schema for config
+     */
+    public function getJsonSchema();
+
+    /**
+     * @return string returns widget title
+     */
+    public function getTitle();
     
     /**
      * @param \Tkuska\DashboardBundle\Entity\Widget $widget
      */
     public function setParams(\Tkuska\DashboardBundle\Entity\Widget $widget);
+
+    /**
+     * @return bool
+     *
+     * Is the widget supported ?
+     */
+    public function support(): bool;
+
+    /**
+     * @return bool
+     *
+     * Should the widget be asynchronously loaded ?
+     */
+    public function supportsAjax(): bool;
+
+    /**
+     * @return string
+     *
+     * Returns the widget's cache key. It should be based on widget's properties.
+     */
+    public function getCacheKey(): string;
+
+    /**
+     * @return int
+     *
+     * In seconds, how long should the cache last.
+     */
+    public function getCacheTimeout(): int;
 }

@@ -2,116 +2,222 @@
 
 namespace Tkuska\DashboardBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Doctrine\ORM\EntityManagerInterface;
+
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Tkuska\DashboardBundle\WidgetProvider;
 use Tkuska\DashboardBundle\Entity\Widget;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Akcja controller.
  */
-class DashboardController extends Controller
+class DashboardController extends AbstractController
 {
     /**
-     * @Route("/dashboard/add_widget/{alias}", name="add_widget")
+     * @var EntityManager
      */
-    public function addWidgetAction($alias)
+    private $em;
+
+    /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
     {
-        /* @var $security \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage */
-        $security = $this->get('security.token_storage');
-        $user = $security->getToken()->getUser();
-        /* @var $widget \Tkuska\DashboardBundle\Widget\WidgetTypeInterface */
-        $widgetType = $this->get('tkuska_dashboard.widget_provider')->getWidgetType($alias);
-        /* @var $widgetRepository \Tkuska\DashboardBundle\Entity\Repository\WidgetRepository */
-        $widgetRepository = $this->getDoctrine()
-                ->getManager()
-                ->getRepository('TkuskaDashboardBundle:Widget');
-        
-        $widget = $widgetRepository->getUserWidget($user, $alias)
-                ->getQuery()
-                ->getOneOrNullResult();
-        
-        if (!$widget) {
-            $widget = new Widget();
-            $widget->importConfig($widgetType);
-            $widget->setUserId($user->getId());
-        }
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine.orm.entity_manager');
-        $em->persist($widget);
-        $em->flush();
-        
-        return $this->redirectToRoute('homepage');
+        $this->em = $em;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
-     * @Route("/dashboard/remove_widget/{alias}", name="remove_widget")
-     */
-    public function removeWidgetAction($alias)
+     * @Route("/dashboard/add_widget/{type}", options={"expose"=true}, name="add_widget")
+     */ 
+    public function addWidgetAction(WidgetProvider $provider, $type)
     {
-        /* @var $security \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage */
-        $security = $this->get('security.token_storage');
-        $user = $security->getToken()->getUser();
-        /* @var $widgetRepository \Tkuska\DashboardBundle\Entity\Repository\WidgetRepository */
-        $widgetRepository = $this->getDoctrine()
-                ->getManager()
-                ->getRepository('TkuskaDashboardBundle:Widget');
-        
-        $widget = $widgetRepository->getUserWidget($user, $alias)
-                ->getQuery()
-                ->getOneOrNullResult();
+        $widgetType = $provider->getWidgetType($type);
+
+        $user_id = method_exists($this->getUser(), 'getId') ? $this->getUser()->getId() : null;
+
+        $widget = new Widget();
+        $widget->importConfig($widgetType);
+        $widget->setUserId($user_id);
+
+        // We just put the new widget under the existing ones
+        $bottomWidget = $this->em->getRepository(Widget::class)->getBottomWidget($user_id);
+        if ($bottomWidget) {
+            $widget->setY($bottomWidget->getY() + $bottomWidget->getHeight());
+        }
+
+        $this->em->persist($widget);
+        $this->em->flush();
+
+        return $this->forward(self::class .'::renderWidget', ['id'=>$widget->getId()]);
+    }
+
+    /**
+     * @Route("/dashboard/remove_widget/{id}", options={"expose"=true}, name="remove_widget")
+     */
+    public function removeWidgetAction($id)
+    {
+        $widget = $this->em->getRepository(Widget::class)->find($id);
+
+        if ($widget) {
+            $this->em->remove($widget);
+            $this->em->flush();
+        }
+
+        return new JsonResponse(true);
+    }
+
+    /**
+     * @Route("/dashboard/update_widget/{id}/{x}/{y}/{width}/{height}", options={"expose"=true}, name="update_widget")
+     */
+    public function updateWidgetAction($id, $x, $y, $width, $height)
+    {
+        $widget = $this->em->getRepository(Widget::class)->find($id);
+
+        if ($widget) {
+            $widget
+                ->setX($x)
+                ->setY($y)
+                ->setWidth($width)
+                ->setHeight($height)
+            ;
+
+            $this->em->flush();
+        }
+
+        return new JsonResponse(true);
+    }
+
+    /**
+     * @Route("/dashboard/update_title/{id}/{title}", options={"expose"=true}, name="update_title")
+     */
+    public function updateWidgetTitleAction($id, $title)
+    {
+        $widget = $this->em->getRepository(Widget::class)->find($id);
+
+        if ($widget) {
+            $widget->setTitle($title);
+            $this->em->flush();
+        }
+
+        return new JsonResponse(true);
+    }
+
+    /**
+     * @Route("/dashboard/render_widget/{id}", options={"expose"=true}, name="render_widget")
+     */
+    public function renderWidget(CacheInterface $cache ,WidgetProvider $provider, $id)
+    {
+        $widget = $this->em->getRepository(Widget::class)->find($id);
+
+        if ($widget) {
+            $widgetType = $provider->getWidgetType($widget->getType());
+            $widgetType->setParams($widget);
+            if($widgetType->getCacheTimeout()) {
+                $uniqueKey = "widget_cache_" . $widgetType->getCacheKey();
+                $content = $cache->get($uniqueKey, function (ItemInterface $item) use ($widgetType) {
+                    $item->expiresAfter($widgetType->getCacheTimeout());
+                    return $widgetType->render();
+                });
+            }else{
+                $content = $widgetType->render();
+            }
+
+        }
+        $response = new Response($content);
+
+        return $response;
+    }
+
+    /**
+     * @Route("/dashboard/widget_save_config/{id}", name="widget_save_config")
+     */
+    public function saveConfig(Request $request, WidgetProvider $provider, $id)
+    {
+        $config = $request->request->get("form")["json_form_".$id];
+        $widget = $this->em->getRepository(Widget::class)->find($id);
         
         if ($widget) {
-            /* @var $em \Doctrine\ORM\EntityManager */
-            $em = $this->get('doctrine.orm.entity_manager');
-            $em->remove($widget);
-            $em->flush();
+            $widget->setConfig($config);
+            $this->em->flush();
         }
-        
-        return new \Symfony\Component\HttpFoundation\JsonResponse(true);
+
+        return $this->redirectToRoute("homepage");
+    }
+
+    /**
+     * Reset config and title of widget.
+     * @Route("/dashboard/widget_reset_config/{id}", name="widget_reset_config")
+     */
+    public function resetConfig($id)
+    {
+        $widget = $this->em->getRepository(Widget::class)->find($id);
+
+        if ($widget) {
+            $widget->setTitle(null);
+            $widget->setConfig(null);
+            $this->em->flush();
+        }
+
+        return $this->redirectToRoute("homepage");
+    }
+
+    /**
+     * Delete current user's widgets.
+     * @Route("/dashboard/delete_my_widgets", name="delete_my_widgets")
+     */
+    public function deleteMyWidgets()
+    {
+        $user = $this->getUser();
+        if ($user) {
+            $this->em->getRepository(Widget::class)->deleteMyWidgets($user->getId());
+        }
+
+        return $this->redirectToRoute("homepage");
     }
     
     /**
-     * @Route("/dashboard/update_widget/{alias}/{x}/{y}/{width}/{height}", name="update_widget")
+     * @Route("/", name="homepage", methods="GET")
      */
-    public function updateWidgetAction($alias, $x, $y, $width, $height)
+    public function dashboardAction(WidgetProvider $provider)
     {
-        /* @var $security \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage */
-        $security = $this->get('security.token_storage');
-        $user = $security->getToken()->getUser();
-        /* @var $widgetRepository \Tkuska\DashboardBundle\Entity\Repository\WidgetRepository */
-        $widgetRepository = $this->getDoctrine()
-                ->getManager()
-                ->getRepository('TkuskaDashboardBundle:Widget');
-        
-        $widget = $widgetRepository->getUserWidget($user, $alias)
-                ->getQuery()
-                ->getOneOrNullResult();
-        /* @var $widget Widget */
-        if ($widget) {
-            $widget->setX($x)
-                    ->setY($y)
-                    ->setWidth($width)
-                    ->setHeight($height);
-            /* @var $em \Doctrine\ORM\EntityManager */
-            $em = $this->get('doctrine.orm.entity_manager');
-            $em->persist($widget);
-            $em->flush();
+        $user = $this->getUser();
+        $widgetTypes = $provider->getWidgetTypes();
+
+        if ($user) {
+            $widgets = $provider->getMyWidgets();
+
+            // l'utilisateur n'a pas de widgets, on met ceux par défaut.
+            if (!$widgets) {
+                $provider->setDefaultWidgetsForUser($user->getId());
+                $widgets = $provider->getMyWidgets();
+            }
+        } else {
+            $widgets = [];
         }
-        
-        return new \Symfony\Component\HttpFoundation\JsonResponse(true);
+
+        return $this->render("@TkuskaDashboard/dashboard/dashboard.html.twig", array(
+            "widgets" => $widgets,
+            "widget_types" => $widgetTypes,
+        ));
     }
-    
-    /**
-     *
-     * @Route("/", name="homepage")
-     * @Method("GET")
-     * @Template()
-     */
-    public function dashboardAction()
+
+    protected function getUser()
     {
-        $widgets = $this->get('tkuska_dashboard.widget_provider')->getMyWidgets();
-        return array('widgets' => $widgets);
+        if ($this->tokenStorage->getToken() && is_object($this->tokenStorage->getToken()->getUser())) {
+            return $this->tokenStorage->getToken()->getUser();
+        }
+
+        return null;
     }
 }

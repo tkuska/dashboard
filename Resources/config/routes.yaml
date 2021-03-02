@@ -1,0 +1,4 @@
+dashbord_routes:
+    resource: '@TkuskaDashboardBundle/Controller/DashboardController.php'
+    prefix: /dashboard
+    type: annotation

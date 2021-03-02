@@ -1,12 +1,12 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Tkuska\DashboardBundle;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
+use Tkuska\DashboardBundle\Entity\Widget;
+
 
 /**
  * Description of WidgetProvider.
@@ -27,34 +27,25 @@ class WidgetProvider
 
     /**
      *
-     * @var \Doctrine\Common\Collections\ArrayCollection
      */
     protected $widgetTypes;
     
     /**
      * 
      * @param \Doctrine\ORM\EntityManager $em
-     * @param \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security
+     * @param Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface $security
      */
-    public function __construct(\Doctrine\ORM\EntityManager $em, \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage $security)
+    public function __construct(EntityManagerInterface $em, TokenStorageInterface $security, iterable $widget_types)
     {
         $this->em = $em;
         $this->security = $security;
-        $this->widgetTypes = new \Doctrine\Common\Collections\ArrayCollection();
+        
+        foreach($widget_types[0] as $id => $w_service) {
+            $this->widgetTypes[$w_service->getType()] = $w_service;
+        }
     }
 
-    /**
-     * 
-     * @param Widget\WidgetTypeInterface $widget
-     * @param string $alias
-     * @return \Tkuska\DashboardBundle\WidgetProvider
-     */
-    public function addWidgetType(Widget\WidgetTypeInterface $widget, $alias)
-    {
-        $this->widgetTypes->set($alias, $widget);
 
-        return $this;
-    }
 
     /**
      * 
@@ -67,29 +58,89 @@ class WidgetProvider
 
     /**
      * 
-     * @param string $alias
+     * @param string $widget_type
      * @return Widget\WidgetTypeInterface
      */
-    public function getWidgetType($alias)
+    public function getWidgetType($widget_type)
     {
-        return $this->widgetTypes->get($alias);
+        if (array_key_exists($widget_type, $this->widgetTypes)) {
+            return clone $this->widgetTypes[$widget_type];
+        }
     }
 
     /**
-     * Returns collection of logged user widgets
+     * Returns current user's widgets
      */
     public function getMyWidgets()
     {
-        $myWidgets = $this->em->getRepository('TkuskaDashboardBundle:Widget')
-                ->getMyWidgets($this->security->getToken()->getUser())
+        // Get user.
+        $user = $this->security->getToken()->getUser();
+        if (!is_object($user)) {
+            return [];
+        }
+
+        // Get user's widgets.
+        $myWidgets = $this->em->getRepository(Widget::class)
+                ->getMyWidgets($user)
                 ->getQuery()
                 ->getResult();
-        $return = array();
-        foreach ($myWidgets as $widget) {
+        
+        // Initialize actual widgets.
+        return $this->initializeWidgets($myWidgets);
+    }
+
+    /**
+     * Returns default widgets.
+     */
+    public function getDefaultWidgets()
+    {
+        $defaultWidgets = $this->em->getRepository(Widget::class)->getDefaultWidgets();
+
+        return $this->initializeWidgets($defaultWidgets);
+    }
+
+    /**
+     * Convert Widgets entites into actual Widgets (widget types)
+     */
+    private function initializeWidgets($widgets)
+    {
+        $return = [];
+        foreach ($widgets as $widget) {
+
             $widgetType = $this->getWidgetType($widget->getType());
-            $widgetType->setParams($widget);
-            $return[] = $widgetType;
+            if ($widgetType) {  // the widget could have been deleted
+                $return[] = $widgetType->setParams($widget);
+            }
+            
         }
         return $return;
+    }
+
+    /**
+     * Sert à copier les widgets par défaut vers les widgets de l'utilisateur.
+     * Cela évite que l'utilisateur puisse modifier les widgets par défaut
+     */
+    public function setDefaultWidgetsForUser($user_id)
+    {
+        if ($user_id) {
+            $sql = "
+                INSERT INTO widgets
+                SELECT
+                    NULL AS id,
+                    x,
+                    y,
+                    width,
+                    height,
+                    type,
+                    " . $user_id . " AS user_id,
+                    NULL AS config,
+                    NULL AS title
+                FROM widgets
+                WHERE user_id IS NULL
+            ";
+
+            $stmt = $this->em->getConnection()->prepare($sql);
+            $stmt->execute();
+        }
     }
 }
